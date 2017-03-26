@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>Multiselect Demo</title>
+<script src="../polyfill/webcomponents-hi-sd-ce.js"></script>
+<!--<script src="../polyfill/webcomponents-hi-sd-ce.js.map"></script>-->
+
+<link rel="import" href="multiselect.html">
+
+</head>
+<body>
+<h1>Multiselect Demo</h1>
+
+
+<div id="container" role="application">
+<x-multiselect placeholder="No Selection" label="Select a State"><li>
+California
+</li><li>
+Florida
+</li><li>
+Hawaii
+</li><li>
+Massachusetts
+</li><li>
+Texas
+</li><li>
+Pennsylvania
+</li><li>
+Alaska
+</li><li>
+Alabama
+</li><li>
+Minnesota
+</li><li>
+Michigan
+</li><li>
+Georgia
+</li><li>
+North Carolina
+</li><li>
+Virginia
+</li><li>
+Ohio
+</li><li>
+New Jersey
+</li><li>
+Colorado
+</li><li>
+Kentucky
+</li><li>
+Illinois
+</li><li>
+Wisconsin
+</li><li>
+Arizona
+</li><li>
+Tennessee
+</li><li>
+Washington
+</li><li>
+Oregon
+</li><li>
+Nebraska
+</li><li>
+New York
+</li><li>
+Maryland
+</li><li>
+Connecticut
+</li><li>
+Oklahoma
+</li><li>
+South Carolina
+</li><li>
+Louisiana
+</li><li>
+Missouri
+</li><li>
+Utah
+</li><li>
+Montana
+</li><li>
+Indiana
+</li><li>
+Nevada
+</li><li>
+New Hampshire
+</li><li>
+Rhode Island
+</li><li>
+Kansas
+</li><li>
+Mississippi
+</li><li>
+Maine
+</li><li>
+New Mexico
+</li><li>
+Arkansas
+</li><li>
+Wyoming
+</li><li>
+Iowa
+</li><li>
+Vermont
+</li><li>
+North Dakota
+</li><li>
+Idaho
+</li><li>
+Delaware
+</li><li>
+West Virginia
+</li><li>
+South Dakota
+</li></x-multiselect>
+</div>
+
+
+<div id="message" aria-live="polite" role="region" aria-label="Message">
+</div>
+
+<!--<script src="../src/jquery.min.js"></script>
+<script src="../src/debug.js"></script>
+-->
+
+<script>
+customElements.whenDefined("x-multiselect").then (() => {
+var multiselect = document.querySelector('x-multiselect');
+multiselect.addEventListener("change", function (e) {
+    message(multiselect.selectedItems().join(", "));
+}); // change listener
+}); // component loaded
+
+function message (text) {
+document.querySelector("#message").innerHTML = '<p>' + text + '</p>\n';
+} // message
+
+//alert ("demo loaded");
+</script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<template id="treeTemplate">
+<style>
+.screen-reader-only {
+position: absolute;
+overflow: none;
+left: -9999; top: -9999;
+}
+
+</style>
+
+<div class="tree" role="application" aria-labelledby="label">
+<span id="label"></span>
+
+<ul class="treeNodes">
+<slot select="li"></slot>
+</ul>
+
+<div class="status screen-reader-only" aria-live="polite"></div>
+</div>
+</template>
+
+<script src="../dom/domTraversal.js"></script>
+<script src="../keyboardNavigation/keyboardNavigation.js"></script>
+
+<script>
+"use strict";
+var template = document.querySelector('#treeTemplate');
+
+(function() {
+var searchTimer = null;
+var searchText = "";
+var filterText = "";
+
+customElements.define ("x-tree", class extends HTMLElement {
+constructor () {
+super ();
+//debug ("x-autocomplete element created");
+} // constructor
+
+connectedCallback () {
+this.init();
+this.render();
+} // connectedCallback
+
+init () {
+this.initOptions();
+
+this._filterText = "";
+this._root = this.createRootElement();
+this._container = this._root.querySelector('.tree');
+this._label = this._root.querySelector("#label");
+this._treeNodes = this._root.querySelector(".treeNodes");
+this._status = this._root.querySelector('.status');
+
+this._label.textContent = this._options.label;
+this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
+
+} // init
+
+initOptions () {
+this._options = {
+label: this.getAttribute("label") || '',
+showStatusMessages: this.getAttribute("showStatusMessages")
+}; // options
+} // initOptions
+
+createRootElement () {
+var root = this.attachShadow({delegatesFocus: true, mode: "open"});
+var content = template.content.cloneNode(true);
+
+/*if (window.ShadowDOMPolyfill) {
+WebComponents.ShadowCSS.shimStyling(content, 'x-autocomplete');
+}
+*/
+
+root.appendChild(content);
+
+//debug ("- root created");
+return root;
+} // createRootElement
+
+render () {
+this.attachHandlers();
+
+//debug ("render complete.");
+} // render
+
+attachHandlers () {
+var self = this;
+
+this._treeNodes.addEventListener("click", this.clickTree.bind(this));
+
+this.currentItem = keyboardNavigation(this._treeNodes, {
+type: "tree",
+activeNodeSelector: ":not([hidden])",
+
+actions: {
+escape: this.escape.bind(this),
+toggleSelected: this.toggleSelected.bind(this),
+done: this.done.bind(this)
+}, // actions
+
+keymap: {
+escape: ["Escape"],
+toggleSelected: [" "],
+done: ["Enter"],
+up: ["ArrowLeft"], down: ["ArrowRight"]
+} // keymap
+}); // keyboardNavigation
+
+//debug ("currentItem: ", this.currentItem, " value = ", this.currentItem().outerHTML);
+} // attachHandlers
+
+
+handleListFilter () {
+this.filterList (this._typeahead.value);
+} // handleListFilter
+
+filterList (text) {
+this.restoreList ();
+
+if (text) {
+text = text.toLowerCase().trim();
+//debug ("filter: ", text);
+this.allElements().forEach (function (element) {
+var elementText = element.textContent.toLowerCase().trim();
+//debug ("- ", elementText.startsWith(text), elementText);
+if (!elementText.startsWith(text)) element.setAttribute ("hidden", "true");
+}); // forEach
+} // if
+
+this.displayItemCount ();
+} // filterList 
+
+
+clickTree (e) {
+var item = e.target;
+while(item && nodeName(item) !== "li") {
+item = item.parentNode;
+}
+
+this.toggleSelected(item);
+}; // clickTree
+
+escape () {
+this.unselectAll();
+this.fireDoneEvent ();
+this.statusMessage (this.selectedNodes().length + " selected items");
+document.activeElement.blur();
+} // escape
+
+toggleSelected(node) {
+if (this.isSelected(node)) this.unselectNode (node);
+else this.selectNode (node);
+
+//this.fireChangeEvent ();
+} // toggleSelected
+
+valueOf (node) {
+if (! node) return "";
+return (node.hasAttribute("value"))?
+node.getAttribute("value")
+: (firstChild(node).textContent || node.textContent);
+} // nodeValue
+
+value () {
+//debug ("number of selected nodes: ", this.selectedNodes().length);
+return this.selectedNodes()
+.map (e => this.valueOf(e));
+} // value
+
+done () {
+this.fireDoneEvent ();
+} // done
+
+/// elements and items
+
+isSelectable (node) {
+return node && node.nodeType === 1 && node.hasAttribute("aria-selected");
+} // isSelectable
+
+selectNode (node) {
+if (this.isSelectable(node) && !this.isSelected(node)) {
+node.setAttribute("aria-selected", "true");
+this.fireChangeEvent (node);
+} // if
+} // selectNode
+
+unselectNode (node) {
+if (this.isSelectable(node) && this.isSelected(node)) {
+node.setAttribute("aria-selected", "false");
+this.fireChangeEvent (node);
+} // if
+} // unselectNode
+
+isSelected (node) {
+return this.isSelectable(node) && node.getAttribute("aria-selected") === "true";
+} // isSelected
+
+
+selectedNodes () {
+return Array.from(this.querySelectorAll("[role=treeitem][aria-selected='true']"));
+} // selectedNodes
+
+allNodes () {
+return Array.from(this.querySelectorAll("[role=treeitem]"));
+} // allNodes
+
+selectAll () {
+this.allNodes().forEach (e => this.selectNode(e));
+} // selectAll
+
+unselectAll () {
+this.allNodes().forEach (e => this.unselectNode(e));
+} // unselectAll
+
+// events
+
+fireChangeEvent () {
+var event = new CustomEvent("change");
+this.dispatchEvent(event);
+}; // fireChangeEvent
+
+fireDoneEvent () {
+var event = new CustomEvent("done");
+this.dispatchEvent(event);
+} // fireDoneEvent
+
+
+
+attributeChangedCallback (optionName, oldValue, newValue) {
+this._options[optionName] = newValue;
+};
+
+
+
+
+statusMessage (text) {
+this._status.textContent = text;
+} // statusMessage
+
+
+}); // custom element
+
+
+
+
+
+})();
+
+//alert	 ("tree component loaded");
+</script>
+

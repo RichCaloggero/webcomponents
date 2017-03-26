@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>keyboardNavigation test</title>
+<script src="../dom/domTraversal.js"></script>
+
+</head>
+<body>
+<h1>Web Component v1 - test</h1>
+
+<p><a href="#">--start--</a></p>
+<div class="listbox" role="region" aria-label="listbox demo">
+<ul>
+<li>item 1</li>
+<li>item 2</li>
+<li>item 3</li>
+</ul>
+</div>
+
+<div class="tree" role="region" aria-label="tree demo">
+<ul><li>
+<span>1.1</span>
+</li><li>
+<span>1.2</span>
+<ul><li>
+<span>2.1</span>
+</li><li>
+<span>2.2</span>
+</li><li>
+<span>2.3</span>
+</li></ul>
+</li><li>
+<span>1.3</span>
+</li></ul>
+</div>
+
+<div id="debug" aria-live="polite" role="region" aria-label="debug">
+</div>
+
+
+<script src="../keyboardNavigation/keyboardNavigation.js"></script>
+<script>
+var list = document.querySelector(".listbox > ul");
+var tree = document.querySelector(".tree > ul");
+var navigateListbox = keyboardNavigation (list);
+var navigateTree = keyboardNavigation (tree, {
+type: "tree",
+keymap: {
+up: ["ArrowLeft"], down: ["ArrowRight"]
+} // keymap
+});
+//navigateListbox().focus();
+//navigateTree().focus();
+
+//alert ("loaded");
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>Tree</title>
+<script src="../polyfill/webcomponents-hi-sd-ce.js"></script>
+<!--<script src="../../polyfill/webcomponents-hi-sd-ce.js.map"></script>-->
+
+<link rel="import" href="tree.html">
+
+</head>
+<body>
+<h1>Tree Demo</h1>
+
+<div tabindex="0" id="message" aria-live="polite" role="region" aria-label="Message">
+</div>
+
+<x-tree label="Choose some stuff"><li>
+<span>1.1</span>
+</li><li>
+<span>1.2</span>
+<ul><li>
+<span>2.1</span>
+</li><li>
+<span>2.2</span>
+<ul><li>
+<span>3.1</span>
+</li><li>
+<span>3.2</span>
+</li><li>
+<span>3.3</span>
+</li></ul>
+</li><li>
+<span>2.3</span>
+</li></ul>
+</li><li>
+<span>1.3</span>
+</li></x-tree>
+</div>
+
+
+
+<script>
+customElements.whenDefined("x-tree").then (() => {
+var tree = document.querySelector('x-tree');
+
+tree.addEventListener("change", function (e) {
+message(tree.value());
+}); // change
+
+tree.addEventListener ("done", function () {
+tree.removeEventListener("change");
+message("done: " + tree.value());
+}); // done
+}); // loaded
+
+function message (text) {
+document.querySelector("#message").innerHTML = '<p>' + text + '</p>\n';
+} // message
+//alert ("tree demo loaded");
+</script>
+</body>
+</html>

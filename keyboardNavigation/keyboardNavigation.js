@@ -11,7 +11,9 @@ var defaultOptions = {
 type: "list", // list, tree, or menu
 embedded: false, // if embedded in another widget, will not maintain tabindex="0" on container or child element
 applyAria: true,
+nodeSelector: "li",
 activeNodeSelector: "",
+groupSelector: "ul",
 wrap: false,
 
 keymap: {
@@ -68,24 +70,26 @@ throw new Error ("invalid key: " + key);
 } // if
 stopTimer ();
 
-if (! action) return true;
+if (action) return performAction (action, e);
+else return true;
+}); // keydown
+
+function performAction (action, e) {
+var newNode;
 
 if (action instanceof Function) {
-performAction (action, e);
+newNode = action.call (container, getFocusedNode());
+if (newNode !== e.target) current (newNode);
+
 } else if (typeof(action) === "string") {
 e.target.dispatchEvent (new CustomEvent(action));
+
 } else {
-alert ("invalid type: " + action);
+alert ("invalid action: " + action);
 return true;
 } // if
 
 return false;
-}); // keydown
-
-function performAction (action, e) {
-var newNode = action.call (container, getFocusedNode());
-
-if (newNode !== e.target) current (newNode);
 } // performAction
 
 
@@ -100,7 +104,7 @@ return getFocusedNode ();
 } // current
 
 function initialFocus () {
-var node = getNodes("li")[0];
+var node = getNodes()[0];
 return node;
 } // initialFocus
 
@@ -113,7 +117,7 @@ function setFocusedNode (node, search) {
 if (! node) return;
 focusedNode = node;
 if (! options.embedded) {
-getNodes("[tabindex='0']")
+getNodes(options.nodeSelector + "[tabindex='0']")
 .forEach (node => node.setAttribute("tabindex", "-1"));
 focusedNode.setAttribute ("tabindex", "0");
 } // if
@@ -124,7 +128,7 @@ if (search && options.type === "tree") definePath (node);
 function definePath (node) {
 var root = node.closest ("[role=tree]");
 if (! node || !root) return;
-getNodes("[role=treeitem][aria-expanded='true']")
+getNodes(options.nodeSelector + "[aria-expanded='true']")
 .forEach (node => node.setAttribute("aria-expanded", "false"));
 
 while (node && root.contains(node)) {
@@ -191,7 +195,7 @@ function removeBullets (container) {
 getNodes("ul").forEach (node => node.style.listStyleType = "none");
 } // removeBullets
 
-function getNodes (selector = "", nodes = container) {
+function getNodes (selector = options.nodeSelector, nodes = container) {
 return getAllNodes (nodes, selector + options.activeNodeSelector);
 } // getNodes
 

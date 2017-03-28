@@ -319,7 +319,7 @@ this.filterList (this._typeahead.value);
 
 filterList (text) {
 this.restoreList ();
-this.unselectAll ();
+//this.unselectAll ();
 
 if (text) {
 text = text.toLowerCase();
@@ -354,6 +354,7 @@ escape () {
 this.close();
 this._typeahead.value = "";
 this.restoreList ();
+this.unselectAll ();
 this.blur();
 } // escape
 

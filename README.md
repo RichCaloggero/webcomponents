@@ -1,37 +1,16 @@
-## Welcome to GitHub Pages
+# Accessible Webcomponents
 
-You can use the [editor on GitHub](https://github.com/RichCaloggero/webcomponents/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+Here are outlines of 3 variations of the combobox theme coded as web components. Styling is minimal or nonexistant, and mouse behavior is mostly nonexistant, however all keyboard and screen reader behavior works with NVDA+Firefox (other screen reader / browser combinations may or may not work).
+Clicking the links will take you to demos. Clone the repository or browse to the files on github to see the code.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+- [multiselect](http://RichCaloggero.github.io/webcomponents/multiselect/demo.html)
+- [autocomplete](http://RichCaloggero.github.io/webcomponents/autocomplete/demo.html)
+- [tree](http://RichCaloggero.github.io/webcomponents/tree/demo.html)
 
-### Markdown
+These all use the aria combobox role as prescribed by aria-1.1. As such, they may not perform well in all browser / screen reader combinations.  They were written and tested with NVDA+Firefox, and thus should be evaluated using same.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+See the following for a thurough description of the combobox role and current screen reader support:
+http://www.ssbbartgroup.com/blog/differences-aria-1-0-1-1-changes-rolecombobox/
 
-```markdown
-Syntax highlighted code block
 
-# Header 1
-## Header 2
-### Header 3
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/RichCaloggero/webcomponents/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.

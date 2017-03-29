@@ -12,7 +12,29 @@
 <body>
 <h1>Multiselect Demo</h1>
 
+<h2>Keyboard and Screen Reader Support</h2>
 
+<ul><li>
+tab to the widget (label is announced, input element focused, screen reader enters application mode)
+</li><li>
+type to filter list (focus remains in input and count of items in resulting list is announced by screen reader as it changes
+</li><li>
+backspace to delete a character (count of number of list items announced as it changes)
+</li><li>
+downArrow to open and begin navigating the list
+</li><li>
+once in list (home, end, up, and down work as expected)
+</li><li>
+space to toggle a selection
+</li><li>
+escape to cancel current selection and return focus back to input element
+</li><li>
+when focused on input element, tab to the currently selected group (screen reader announces group label followed by currently selected item, or placeholder if no selection
+</li><li>
+change event fired on "x-multiselect" element when item's selected state changes
+</li></ul>
+
+<h2>Multiselect Widget</h2>
 <div id="container" role="application">
 <x-multiselect placeholder="No Selection" label="Select a State"><li>
 California

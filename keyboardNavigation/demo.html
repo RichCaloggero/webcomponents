@@ -43,13 +43,13 @@
 <script>
 var list = document.querySelector(".listbox > ul");
 var tree = document.querySelector(".tree > ul");
-var navigateListbox = keyboardNavigation (list);
+var navigateListbox = keyboardNavigation (list, {activeNodeSelector: ":not([hidden])"});
 var navigateTree = keyboardNavigation (tree, {
 type: "tree",
 keymap: {
 up: ["ArrowLeft"], down: ["ArrowRight"]
 } // keymap
-});
+});	
 //navigateListbox().focus();
 //navigateTree().focus();
 

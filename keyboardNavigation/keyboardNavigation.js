@@ -211,7 +211,7 @@ return getAllNodes (nodes, selector);
 /// default actions
 
 function nextItem (node) {
-//alert ("nextItem: activeNodeSelector is " + options.activeNodeSelector);
+alert ("nextItem: " + options.nodeSelector + options.activeNodeSelector);
 return nextSibling (node, options.nodeSelector + options.activeNodeSelector);
 } // nextItem
 

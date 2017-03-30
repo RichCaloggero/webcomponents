@@ -2,6 +2,8 @@
 /// DOM traversal
 
 function nextSibling (node, selector = "*") {
+selector = selector.trim();
+//alert ("nextSibling: selector is " + selector);
 while (node) {
 node = node.nextSibling;
 if (node && node.nodeType === 1 && node.matches(selector)) return node;
@@ -10,6 +12,8 @@ return null;
 } // nextSibling
 
 function previousSibling (node, selector = "*") {
+selector = selector.trim();
+//alert ("previousSibling: selector is " + selector);
 while (node) {
 node = node.previousSibling;
 if (node && node.nodeType === 1 && node.matches(selector)) return node;
@@ -57,6 +61,7 @@ return (s)? i : -1;
 } // indexOf
 
 function getAllNodes (nodes, selector = "*") {
+selector = selector.trim();
 return flatten (nodes)
 .filter (node => node.matches(selector));
 

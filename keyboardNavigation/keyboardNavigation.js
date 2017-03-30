@@ -47,9 +47,10 @@ options.keymap = processKeymap (options.keymap);
 
 if (container.matches("ul")) removeBullets (container);
 
-
 if (options.applyAria) applyAria (container, options.type);
 setFocusedNode(initialFocus());
+alert (`keyboardNavigation: ${options.rootSelector}, ${options.groupSelector}, ${options.nodeSelector}, ${options.activeNodeSelector}`);
+
 
 container.addEventListener ("keypress", function (e) {
 var character = e.char || String.fromCharCode (e.which);
@@ -109,7 +110,8 @@ return node;
 } // initialFocus
 
 function getFocusedNode () {
-return (focusedNode && options.activeNodeSelector && focusedNode.matches(options.activeNodeSelector))?
+alert ("activeNode: '" + options.activeNodeSelector + "'");
+return ((focusedNode && options.activeNodeSelector) && focusedNode.matches(options.activeNodeSelector))?
 focusedNode : initialFocus();
 } // getFocusedNode
 
@@ -171,21 +173,27 @@ type = type.toLowerCase();
 
 
 if (type === "list") {
-getNodes("ul").forEach (node => node.setAttribute ("role", "listbox"));
-getNodes("li").forEach (node => {
+getNodes(options.groupSelector).forEach (node => node.setAttribute ("role", "listbox"));
+getNodes(options.nodeSelector).forEach (node => {
 node.setAttribute ("role", "option");
 node.setAttribute ("tabindex", "-1");
 });
+options.rootSelector = "[role=listbox]";
+options.groupSelector = "[role=listbox]";
+options.nodeSelector = "[role=option]";
 
 } else if (type === "tree") {
-getNodes ("ul").forEach (node => node.setAttribute("role", "group"));
-getNodes ("li").forEach (node => {
-if (node.querySelector("ul")) node.setAttribute("aria-expanded", "false");
+getNodes (options.groupSelector).forEach (node => node.setAttribute("role", "group"));
+getNodes (options.nodeSelector).forEach (node => {
+if (node.querySelector(options.groupSelector)) node.setAttribute("aria-expanded", "false");
 else node.setAttribute ("aria-selected", "false");
 node.setAttribute("role", "treeitem");
 node.setAttribute ("tabindex", "-1");
 });
 container.setAttribute ("role", "tree");
+options.rootSelector = "[role=tree]";
+options.groupSelector = "[role=group]";
+options.nodeSelector = "[role=treeitem]";
 
 } // if
 } // applyAria
@@ -195,19 +203,20 @@ function removeBullets (container) {
 getNodes("ul").forEach (node => node.style.listStyleType = "none");
 } // removeBullets
 
-function getNodes (selector = options.nodeSelector, nodes = container) {
-return getAllNodes (nodes, selector + options.activeNodeSelector);
+function getNodes (selector = (options.nodeSelector + options.activeNodeSelector), nodes = container) {
+return getAllNodes (nodes, selector);
 } // getNodes
 
 
 /// default actions
 
 function nextItem (node) {
-return nextSibling (node, options.activeNodeSelector);
+//alert ("nextItem: activeNodeSelector is " + options.activeNodeSelector);
+return nextSibling (node, options.nodeSelector + options.activeNodeSelector);
 } // nextItem
 
 function prevItem (node) {
-return previousSibling (node, options.activeNodeSelector);
+return previousSibling (node, options.nodeSelector + options.activeNodeSelector);
 } // prevItem
 
 function firstItem (node) {
@@ -215,13 +224,13 @@ return getNodes().slice(0,-1)[0];
 } // firstItem 
 
 function lastItem (node) {
-return getNodes().slice(-2)[0];
+return getNodes().slice(-1)[0];
 } // lastItem 
 
 
 function upLevel (node) {
-var root = node.closest ("[role=tree]");
-var up = node.parentNode.closest("[role=treeitem]");
+var root = node.closest (options.rootSelector);
+var up = node.parentNode.closest(options.nodeSelector);
 if (up && root.contains(up)) {
 up.setAttribute ("aria-expanded", "false");
 return up;
@@ -231,7 +240,7 @@ return node;
 } // upLevel
 
 function downLevel (node) {
-var down = node.querySelector("[role=group] > [role=treeitem]");
+var down = node.querySelector(options.groupSelector + " > " + options.nodeSelector);
 if (down) {
 node.setAttribute ("aria-expanded", "true");
 return down;
@@ -304,4 +313,4 @@ return result;
 return current;
 } // keyboardNavigation
 
-//alert ("keyboardNavigation.js loaded");
+alert ("keyboardNavigation.js loaded");

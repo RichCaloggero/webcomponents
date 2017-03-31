@@ -49,7 +49,6 @@ if (container.matches("ul")) removeBullets (container);
 
 if (options.applyAria) applyAria (container, options.type);
 setFocusedNode(initialFocus());
-alert (`keyboardNavigation: ${options.rootSelector}, ${options.groupSelector}, ${options.nodeSelector}, ${options.activeNodeSelector}`);
 
 
 container.addEventListener ("keypress", function (e) {
@@ -110,8 +109,8 @@ return node;
 } // initialFocus
 
 function getFocusedNode () {
-alert ("activeNode: '" + options.activeNodeSelector + "'");
-return ((focusedNode && options.activeNodeSelector) && focusedNode.matches(options.activeNodeSelector))?
+//debug("activeNode: '" + options.activeNodeSelector + "'");
+return (focusedNode &&  focusedNode.matches(options.nodeSelector + options.activeNodeSelector))?
 focusedNode : initialFocus();
 } // getFocusedNode
 
@@ -211,7 +210,6 @@ return getAllNodes (nodes, selector);
 /// default actions
 
 function nextItem (node) {
-alert ("nextItem: " + options.nodeSelector + options.activeNodeSelector);
 return nextSibling (node, options.nodeSelector + options.activeNodeSelector);
 } // nextItem
 

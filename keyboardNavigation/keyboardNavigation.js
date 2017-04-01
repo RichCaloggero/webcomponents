@@ -10,6 +10,7 @@ var keymap, actions;
 var defaultOptions = {
 type: "list", // list, tree, or menu
 embedded: false, // if embedded in another widget, will not maintain tabindex="0" on container or child element
+multiselect: false,
 applyAria: true,
 nodeSelector: "li",
 activeNodeSelector: "",
@@ -79,7 +80,7 @@ var newNode;
 
 if (action instanceof Function) {
 newNode = action.call (container, getFocusedNode());
-if (newNode !== e.target) current (newNode);
+if (newNode !== e.target) current (newNode, "search");
 
 } else if (typeof(action) === "string") {
 e.target.dispatchEvent (new CustomEvent(action));
@@ -97,7 +98,12 @@ function current (node, search) {
 if (node) {
 setFocusedNode (node, search);
 node.focus ();
+if (! options.multiselect) {
+setAttributes("aria-selected"); // removes the attribute completely
+node.setAttribute("aria-selected", "true");
+} // if
 return node;
+
 } else {
 return getFocusedNode ();
 } // if
@@ -118,9 +124,14 @@ function setFocusedNode (node, search) {
 if (! node) return;
 focusedNode = node;
 if (! options.embedded) {
-getNodes(options.nodeSelector + "[tabindex='0']")
-.forEach (node => node.setAttribute("tabindex", "-1"));
+setAttributes ("tabindex", "-1");
 focusedNode.setAttribute ("tabindex", "0");
+} // if
+
+if (! options.multiselect) {
+// selection follows focus
+setAttributes ("aria-selected"); // remove attribute completely
+focusedNode.setAttribute ("aria-selected", "true");
 } // if
 
 if (search && options.type === "tree") definePath (node);
@@ -129,14 +140,12 @@ if (search && options.type === "tree") definePath (node);
 function definePath (node) {
 var root = node.closest ("[role=tree]");
 if (! node || !root) return;
-getNodes(options.nodeSelector + "[aria-expanded='true']")
-.forEach (node => node.setAttribute("aria-expanded", "false"));
+setAttributes ("aria-expanded", "false", options.nodeSelector + "[aria-expanded='true']");
 
 while (node && root.contains(node)) {
 node = node.parentElement.closest("[role=treeitem]");
 if (node) node.setAttribute ("aria-expanded", "true");
 } // while
-
 } // definePath
 
 // create an observer instance
@@ -170,31 +179,36 @@ function applyAria (container, type) {
 var name, branches, children;
 type = type.toLowerCase();
 
-
 if (type === "list") {
-getNodes(options.groupSelector).forEach (node => node.setAttribute ("role", "listbox"));
+setAttributes ("role", "listbox", options.groupSelector);
+
 getNodes(options.nodeSelector).forEach (node => {
 node.setAttribute ("role", "option");
+if (options.multiselect) node.setAttribute ("aria-selected", "false");
 node.setAttribute ("tabindex", "-1");
 });
+
 options.rootSelector = "[role=listbox]";
 options.groupSelector = "[role=listbox]";
 options.nodeSelector = "[role=option]";
 
 } else if (type === "tree") {
-getNodes (options.groupSelector).forEach (node => node.setAttribute("role", "group"));
+setAttributes ("role", "group", options.groupSelector);
+
 getNodes (options.nodeSelector).forEach (node => {
 if (node.querySelector(options.groupSelector)) node.setAttribute("aria-expanded", "false");
-else node.setAttribute ("aria-selected", "false");
+else if (options.multiselect) node.setAttribute ("aria-selected", "false");
 node.setAttribute("role", "treeitem");
 node.setAttribute ("tabindex", "-1");
 });
+
 container.setAttribute ("role", "tree");
 options.rootSelector = "[role=tree]";
 options.groupSelector = "[role=group]";
 options.nodeSelector = "[role=treeitem]";
-
 } // if
+
+if (options.multiselect) setAttributes ("aria-multiselectable", "true", options.rootSelector);
 } // applyAria
 
 
@@ -301,6 +315,20 @@ function stopTimer () {
 clearTimeout (searchTimer);
 } // stopTimer
 
+function setAttributes (name = "", value = "", selector = options.nodeSelector) {
+name = name.trim();
+selector = selector.trim();
+value = value.trim();
+if (! name) return;
+//debug ("setAttributes: ", name, value, `"${selector}"`);
+
+getNodes (selector).forEach (
+(node) => (value)? node.setAttribute(name, value)
+: node.removeAttribute(name)
+); // forEach
+} // setAttributes
+
+
 function isAlphanumeric (x) {
 var result = /[-+=_.!@#$%^&*()0-9a-zA-Z]/.test (x);
 //alert ("isAlphanumeric " + x + " is " + result);
@@ -311,4 +339,4 @@ return result;
 return current;
 } // keyboardNavigation
 
-alert ("keyboardNavigation.js loaded");
+//alert ("keyboardNavigation.js loaded");

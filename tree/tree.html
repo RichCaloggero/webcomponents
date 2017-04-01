@@ -93,6 +93,7 @@ this._treeNodes.addEventListener("click", this.clickTree.bind(this));
 this.currentItem = keyboardNavigation(this._treeNodes, {
 type: "tree",
 activeNodeSelector: ":not([hidden])",
+multiselect: true,
 
 actions: {
 escape: this.escape.bind(this),

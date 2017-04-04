@@ -3,6 +3,7 @@
 
 function nextSibling (node, selector = "*") {
 selector = selector.trim();
+//alert ("nextSibling: selector is " + selector);
 while (node) {
 node = node.nextSibling;
 if (node && node.nodeType === 1 && node.matches(selector)) return node;

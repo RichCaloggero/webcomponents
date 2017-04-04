@@ -19,7 +19,6 @@ left: -9999; top: -9999;
 </div>
 </template>
 
-<script src="../dom/domTraversal.js"></script>
 <script src="../keyboardNavigation/keyboardNavigation.js"></script>
 
 <script>
@@ -93,7 +92,6 @@ this._treeNodes.addEventListener("click", this.clickTree.bind(this));
 this.currentItem = keyboardNavigation(this._treeNodes, {
 type: "tree",
 activeNodeSelector: ":not([hidden])",
-multiselect: true,
 
 actions: {
 escape: this.escape.bind(this),

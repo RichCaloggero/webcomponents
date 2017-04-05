@@ -1,0 +1,23 @@
+{
+  "name": "webcomponents",
+  "homepage": "https://github.com/RichCaloggero/webcomponents",
+  "authors": [
+    "Rich Caloggero <rjc@mit.edu>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "keyboard-navigation": "https://github.com/RichCaloggero/keyboard-navigation.git",
+    "webcomponentsjs": "^1.0.0-rc.7"
+  }
+}
+  

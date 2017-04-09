@@ -7,13 +7,11 @@
 <!--<script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>-->
 
 <link rel="import" href="select-list.html">
-
 </head>
 <body>
 <h1>Select-list Demo</h1>
 
-
-<div id="container" role="application">
+<div>
 <select-list label="Select a State"><li>
 California
 </li><li>
@@ -117,7 +115,6 @@ South Dakota
 </li></select-list>
 </div>
 
-
 <div id="message" aria-live="polite" role="region" aria-label="Message">
 </div>
 
@@ -126,11 +123,16 @@ South Dakota
 -->
 
 <script>
-customElements.whenDefined("select-list").then (() => {
+customElements.whenDefined("select-list").then (function () {
 var selectList = document.querySelector("select-list");
-selectList.addEventListener("change", function (e) {
-    message(selectList.valueOf().join(", "));
-}); // change listener
+selectList.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+message(selectList.value().join(", "));
+return false;
+} // if
+
+return true;
+}); // listener
 }); // component loaded
 
 function message (text) {

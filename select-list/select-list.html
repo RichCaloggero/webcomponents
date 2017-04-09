@@ -1,4 +1,4 @@
-<template id="selectListTemplate">
+<template id="select-list-template">
 <style>
 .screen-reader-only {
 position: absolute;
@@ -39,10 +39,8 @@ background: #e9e9e9;
 }
 </style>
 
-<div class="select-list" role="group">
-<label>
-<span class="text"></span>
-</label>
+<div class="select-list" role="group" aria-labelledby="label">
+<span id="label"></span>
 
 <ul class="listbox" role="listbox">
 <slot></slot>
@@ -56,12 +54,9 @@ background: #e9e9e9;
 
 <script>
 "use strict";
-var template = document.querySelector('#selectListTemplate');
+var template = document.querySelector("#select-list-template");
 
 (function() {
-var searchTimer = null;
-var searchText = "";
-var filterText = "";
 
 customElements.define ("select-list", class extends HTMLElement {
 constructor () {
@@ -79,18 +74,19 @@ this.initOptions();
 
 this._root = this.createRootElement();
 this._control = this._root.querySelector('.selectList');
-this._labelText = this._root.querySelector('label .text');
-this._list = this._root.querySelector("select-list [role='listbox']");
+this._label = this._root.querySelector("#label");
+this._list = this._root.querySelector(".listbox");
 this._status = this._root.querySelector(".status");
 
-this._labelText.textContent = this._options.label;
+this._label.textContent = this._options.label;
 this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
 
 } // init
 
 initOptions () {
 this._options = {
-label: this.getAttribute("label") || '',
+multiselect: this.hasAttribute("multiselect"),
+label: this.getAttribute("label") || "",
 showStatusMessages: this.getAttribute("showStatusMessages")
 }; // options
 } // initOptions
@@ -114,20 +110,38 @@ this.attachHandlers();
 attachHandlers () {
 var self = this;
 
-this.currentItem = keyboardNavigation(this._list); // keyboardNavigation
+this.currentItem = keyboardNavigation(this._list, {
+multiselect: this._options.multiselect,
+
+actions: {
+toggleSelection: function (node) {
+if (!node || !this._options.multiselect) return;
+
+node.setAttribute ("aria-selected",
+(node.getAttribute("aria-selected") === "true")? "false" : "true"
+); // setAttribute
+} // toggleSelection
+}, // actions
+
+keymap: {
+toggleSelection: [" "]
+} // keymap
+}); // keyboardNavigation
 
 //debug ("currentItem: ", this.currentItem, " value = ", this.currentItem().outerHTML);
 } // attachHandlers
 
+value () {
+return this.querySelectorAll("[aria-selected='true']")
+.map (node => this.valueOf(node));
+} // value
 
-value (node) {
+valueOf (node) {
 if (! node) return "";
 return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
-} // itemValue
+} // valueOf
 
-value () {
-} // value
 
 displayItemCount (text) {
 this.statusMessage (this.querySelectorAll("[role=option]").length + " " + (text || "items"));

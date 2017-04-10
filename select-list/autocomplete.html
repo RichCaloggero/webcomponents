@@ -1,4 +1,4 @@
-<template id="template">
+<template id="autocomplete-template">
 <style>
 .screen-reader-only {
 position: absolute;
@@ -26,24 +26,23 @@ left: -9999; top: -9999;
 <link rel="import" href="select-list.html">
 <script>
 "use strict";
-var template = document.querySelector("#template");
 
 (function() {
+var template = document.querySelector("#autocomplete-template");
 var searchText = "";
 var filterText = "";
 
 customElements.define ("x-autocomplete", class extends HTMLElement {
 constructor () {
 super ();
-//debug ("x-autocomplete element created");
 } // constructor
 
 connectedCallback () {
 var self = this;
 customElements.whenDefined("select-list").then (function () {
-self.init();
-self.render();
-}); // when defined
+this.init();
+this.render();
+}.bind(this)); // when defined
 } // connectedCallback
 
 init () {
@@ -81,14 +80,12 @@ WebComponents.ShadowCSS.shimStyling(content, 'x-autocomplete');
 
 root.appendChild(content);
 
-//debug ("- root created");
 return root;
 } // createRootElement
 
 render () {
 this.attachHandlers();
 
-//debug ("render complete.");
 } // render
 
 attachHandlers () {
@@ -101,13 +98,11 @@ this._list.addEventListener('click', this.clickList.bind(this));
 
 
 
-//debug ("currentItem: ", this.currentItem, " value = ", this.currentItem().outerHTML);
 } // attachHandlers
 
 handleOpenOnDownArrow (e) {
 if (e.key === "ArrowDown") {
 this.open ();
-//debug ("setting focus to ", this.currentItem().outerHTML);
 this.currentItem().focus();
 e.preventDefault();
 e.stopPropagation();

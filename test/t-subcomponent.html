@@ -1,20 +1,17 @@
-<template id="autocompleteTemplate">
+<template id="subcomponent-template">
 
 <div class="t-subcomponent">
-<span>t-subcompnent shadow dom</span>
-
-<div>
-<slot></slot>
-</div>
+<h3>t-subcomponent</h3>
+<p>subcomponent content</p>
 
 </div>
 </template>
 
 <script>
 "use strict";
-var template = document.querySelector("#template");
 
 (function() {
+var template = document.querySelector("#subcomponent-template");
 
 customElements.define ("t-subcomponent", class extends HTMLElement {
 constructor () {
@@ -25,6 +22,9 @@ alert ("t-subcomponent constructor");
 connectedCallback () {
 var self = this;
 alert ("t-subcomponent connected");
+var root = self.attachShadow({delegatesFocus: true, mode: "open"});
+var content = template.content.cloneNode(true);
+root.appendChild(content);
 } // connectedCallback
 
 

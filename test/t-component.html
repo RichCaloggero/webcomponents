@@ -1,20 +1,20 @@
-<template id="template">
+<template id="component-template">
 
 <div class="t-component">
-<span>t-component shadow dom</span>
+<h2>t-component</h2>
 
-<t-subcomponent><p>this is subcomponent content</p></t-subcomponent>
+<t-subcomponent>
+</t-subcomponent>
 
-<div class="status screen-reader-only" aria-live="polite"></div>
 </div>
 </template>
 
 <link rel="import" href="t-subcomponent.html">
 <script>
 "use strict";
-var template = document.querySelector('#template');
 
 (function() {
+var template = document.querySelector("#component-template");
 
 customElements.define ("t-component", class extends HTMLElement {
 constructor () {
@@ -26,8 +26,9 @@ connectedCallback () {
 var self = this;
 alert ("t-component connected");
 customElements.whenDefined("t-subcomponent").then (function () {
-self.init();
-self.render();
+var root = self.attachShadow({delegatesFocus: true, mode: "open"});
+var content = template.content.cloneNode(true);
+root.appendChild(content);
 }); // when defined
 } // connectedCallback
 

@@ -104,18 +104,13 @@ this.attachHandlers();
 attachHandlers () {
 var self = this;
 
-this.currentItem = keyboardNavigation(this._list, {
+this.currentItem = 
+keyboardNavigation(this._list, {
 multiselect: this._options.multiselect,
 embedded: this._options.embedded,
 
 actions: {
-toggleSelection: function (node) {
-if (!node || !this._options.multiselect) return;
-
-node.setAttribute ("aria-selected",
-(node.getAttribute("aria-selected") === "true")? "false" : "true"
-); // setAttribute
-} // toggleSelection
+toggleSelection: this.toggleSelection
 }, // actions
 
 keymap: {
@@ -124,6 +119,14 @@ toggleSelection: [" "]
 }); // keyboardNavigation
 
 } // attachHandlers
+
+toggleSelection (node) {
+if (!node || !this._options.multiselect) return;
+
+node.setAttribute ("aria-selected",
+(node.getAttribute("aria-selected") === "true")? "false" : "true"
+); // setAttribute
+} // toggleSelection
 
 value () {
 return this.querySelectorAll("[aria-selected='true']")

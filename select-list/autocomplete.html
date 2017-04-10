@@ -103,7 +103,7 @@ this._list.addEventListener('click', this.clickList.bind(this));
 handleOpenOnDownArrow (e) {
 if (e.key === "ArrowDown") {
 this.open ();
-this.currentItem().focus();
+this._list.currentItem().focus();
 e.preventDefault();
 e.stopPropagation();
 e.stopImmediatePropagation();

@@ -1,40 +1,38 @@
-<template id="select-list-template">
+<template id="template">
 <style>
 .screen-reader-only {
 position: absolute;
-overflow: none;
+overflow: hidden;
 left: -9999; top: -9999;
 }
 
 .select-list {
 position: relative;
 box-sizing: border-box;
-display: inline-block;
-/*width: 20em;*/
 }
 
-.listbox {
+.list {
 padding: 0;
 margin: 0;
 }
 
-::content .option {
+::content [role='option'] {
 padding: .5em 1em;
 min-height: 1em;
 list-style: none;
 cursor: pointer;
 }
 
-::content .option[hidden] {
+::content [role='option'][hidden] {
 display: none;
 }
 
-::content .option:focus {
+::content [role='option']:focus {
 outline: dotted 1px #333;
 background: #e9e9e9;
 }
 
-::content .option:hover {
+::content [role='option']:hover {
 background: #e9e9e9;
 }
 </style>
@@ -54,7 +52,7 @@ background: #e9e9e9;
 
 <script>
 "use strict";
-var template = document.querySelector("#select-list-template");
+var template = document.querySelector("#template");
 
 (function() {
 
@@ -73,22 +71,21 @@ init () {
 this.initOptions();
 
 this._root = this.createRootElement();
-this._control = this._root.querySelector('.selectList');
+this._control = this._root.querySelector(".selectList");
 this._label = this._root.querySelector("#label");
 this._list = this._root.querySelector(".listbox");
 this._status = this._root.querySelector(".status");
 
 this._label.textContent = this._options.label;
-this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
 
 } // init
 
 initOptions () {
 this._options = {
 multiselect: this.hasAttribute("multiselect"),
-label: this.getAttribute("label") || "",
-showStatusMessages: this.getAttribute("showStatusMessages")
-}; // options
+embedded: this.hasAttribute("embedded"),
+label: this.getAttribute("label") || ""
+}; // this._options
 } // initOptions
 
 createRootElement () {
@@ -112,6 +109,7 @@ var self = this;
 
 this.currentItem = keyboardNavigation(this._list, {
 multiselect: this._options.multiselect,
+embedded: this._options.embedded,
 
 actions: {
 toggleSelection: function (node) {

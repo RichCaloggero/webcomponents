@@ -1,0 +1,46 @@
+<template id="template">
+
+<div class="t-component">
+<span>t-component shadow dom</span>
+
+<t-subcomponent><p>this is subcomponent content</p></t-subcomponent>
+
+<div class="status screen-reader-only" aria-live="polite"></div>
+</div>
+</template>
+
+<link rel="import" href="t-subcomponent.html">
+<script>
+"use strict";
+var template = document.querySelector('#template');
+
+(function() {
+
+customElements.define ("t-component", class extends HTMLElement {
+constructor () {
+super ();
+alert ("t-component constructor");
+} // constructor
+
+connectedCallback () {
+var self = this;
+alert ("t-component connected");
+customElements.whenDefined("t-subcomponent").then (function () {
+self.init();
+self.render();
+}); // when defined
+} // connectedCallback
+
+
+
+statusMessage (text) {
+this._status.textContent = text;
+} // statusMessage
+
+}); // custom element
+
+})();
+
+alert	 ("t-component loaded");
+</script>
+

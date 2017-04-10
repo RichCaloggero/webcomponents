@@ -1,0 +1,38 @@
+<template id="autocompleteTemplate">
+
+<div class="t-subcomponent">
+<span>t-subcompnent shadow dom</span>
+
+<div>
+<slot></slot>
+</div>
+
+</div>
+</template>
+
+<script>
+"use strict";
+var template = document.querySelector("#template");
+
+(function() {
+
+customElements.define ("t-subcomponent", class extends HTMLElement {
+constructor () {
+super ();
+alert ("t-subcomponent constructor");
+} // constructor
+
+connectedCallback () {
+var self = this;
+alert ("t-subcomponent connected");
+} // connectedCallback
+
+
+
+}); // custom element
+
+})();
+
+alert	 ("t-subcomponent loaded");
+</script>
+

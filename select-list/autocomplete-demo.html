@@ -2,16 +2,18 @@
 <html>
 <head lang="en">
 <meta charset="UTF-8">
-<title>Select-list Demo</title>
+<title>Autocomplete Demo</title>
 <script src="../bower_components/webcomponentsjs/webcomponents-hi-sd-ce.js"></script>
 <!--<script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>-->
 
-<link rel="import" href="select-list.html">
+<link rel="import" href="autocomplete.html">
+
 </head>
 <body>
-<h1>Select-list Demo</h1>
+<h1>Autocomplete Demo</h1>
 
-<select-list label="Select a State"><li>
+
+<x-autocomplete label="Select a State"><li>
 California
 </li><li>
 Florida
@@ -111,7 +113,8 @@ Delaware
 West Virginia
 </li><li>
 South Dakota
-</li></select-list>
+</li></x-autocomplete>
+
 
 <div id="message" aria-live="polite" role="region" aria-label="Message">
 </div>
@@ -121,23 +124,18 @@ South Dakota
 -->
 
 <script>
-customElements.whenDefined("select-list").then (function () {
-var selectList = document.querySelector("select-list");
-selectList.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-message(selectList.value().join(", "));
-return false;
-} // if
-
-return true;
-}); // listener
+customElements.whenDefined("x-autocomplete").then (() => {
+var autocomplete = document.querySelector('x-autocomplete');
+autocomplete.addEventListener("change", function (e) {
+    message(autocomplete.valueOf().join(", "));
+}); // change listener
 }); // component loaded
 
 function message (text) {
 document.querySelector("#message").innerHTML = '<p>' + text + '</p>\n';
 } // message
 
-alert ("demo loaded");
+//alert ("demo loaded");
 </script>
 </body>
 </html>

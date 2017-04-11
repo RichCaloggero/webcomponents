@@ -93,10 +93,9 @@ var self = this;
 this._typeahead.addEventListener ("keydown", this.handleOpenOnDownArrow.bind(this));
 this._typeahead.addEventListener ("input", this.handleListFilter.bind(this));
 
-
-this._list.addEventListener('click', this.clickList.bind(this));
-
-
+this._list.addEventListener ("accept", this.accept.bind(this));
+this._list.addEventListener ("cancel", this.cancel.bind(this));
+this._list.addEventListener("click", this.accept.bind(this));
 
 } // attachHandlers
 
@@ -151,21 +150,33 @@ item = item.parentNode;
 this.chooseItem(item);
 }; // clickList
 
-escape () {
+accept() {
+this._typeahead.value = this._list.value().join (", ");
+this.close ();
+this.dispatchEvent(new CustomEvent("change"));
+} // accept
+
+cancel () {
 this.close();
 this._typeahead.value = "";
 this.restoreList ();
-this.blur();
-} // escape
+//this.blur();
+} // cancel
 
-chooseItem (item) {
-this._typeahead.value = (item.hasAttribute("value"))?
-item.getAttribute("value") : item.textContent;
-this.close ();
-this.fireChangeEvent ();
-} // chooseItem
 
 /// elements and items
+
+
+value () {
+return this.querySelectorAll("[aria-selected='true']")
+.map (node => this.valueOf(node));
+} // value
+
+valueOf (node) {
+if (! node) return "";
+return (node.hasAttribute("value"))?
+node.getAttribute("value") : node.textContent;
+} // valueOf
 
 selectedElements () {
 return Array.from(this.querySelectorAll("[selected]"));
@@ -216,15 +227,6 @@ this._popup.style.display = show ? 'block' : 'none';
 this._control.setAttribute("aria-expanded", show? "true" : "false");
 } // togglePopup
 
-itemValue (item) {
-if (! item) return "";
-return (item.hasAttribute("value"))?
-item.getAttribute("value") : item.textContent;
-} // itemValue
-
-valueOf () {
-return this._typeahead.value;
-} // valueOf
 
 displayItemCount (text) {
 this.statusMessage (this.itemElements().length + " " + (text || "items"));

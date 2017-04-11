@@ -104,17 +104,21 @@ this.attachHandlers();
 attachHandlers () {
 var self = this;
 
-this.currentItem = 
-keyboardNavigation(this._list, {
+this.currentItem = keyboardNavigation(this._list, {
 multiselect: this._options.multiselect,
 embedded: this._options.embedded,
+activeNodeSelector: ":not([hidden])",
 
 actions: {
-toggleSelection: this.toggleSelection
+toggleSelection: this.toggleSelection.bind(this),
+accept: this.accept.bind(this),
+cancel: this.cancel.bind(this)
 }, // actions
 
 keymap: {
-toggleSelection: [" "]
+toggleSelection: [" "],
+accept: ["Enter"],
+cancel: ["Escape"]
 } // keymap
 }); // keyboardNavigation
 
@@ -128,13 +132,26 @@ node.setAttribute ("aria-selected",
 ); // setAttribute
 } // toggleSelection
 
+accept () {
+this.dispatchEvent(new CustomEvent("accept"));
+} // accept
+
+cancel () {
+this.dispatchEvent(new CustomEvent("cancel"));
+} // cancel
+
+
 value () {
-return this.querySelectorAll("[aria-selected='true']")
-.map (node => this.valueOf(node));
+debugger;
+var _value = this.querySelectorAll("[aria-selected='true']");
+alert(typeof(_value) + ": " + _value.length);
+
+_value.map (node => this.valueOf(node), this);
 } // value
 
 valueOf (node) {
 if (! node) return "";
+alert (node);
 return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
 } // valueOf

@@ -11,7 +11,7 @@
 <body>
 <h1>Select-list Demo</h1>
 
-<select-list label="Select a State"><li>
+<select-list multiselect label="Select a State"><li>
 California
 </li><li>
 Florida
@@ -123,13 +123,9 @@ South Dakota
 <script>
 customElements.whenDefined("select-list").then (function () {
 var selectList = document.querySelector("select-list");
-selectList.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-message(selectList.value().join(", "));
+selectList.addEventListener("accept", function () {
+message(selectList.value().toString());
 return false;
-} // if
-
-return true;
 }); // listener
 }); // component loaded
 
@@ -137,7 +133,7 @@ function message (text) {
 document.querySelector("#message").innerHTML = '<p>' + text + '</p>\n';
 } // message
 
-alert ("demo loaded");
+//alert ("demo loaded");
 </script>
 </body>
 </html>

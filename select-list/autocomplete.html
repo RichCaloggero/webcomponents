@@ -141,19 +141,11 @@ element.removeAttribute ("hidden");
 }); // forEach
 } // restoreList
 
-clickList (e) {
-var item = e.target;
-while(item && item.tagName !== 'LI') {
-item = item.parentNode;
-}
-
-this.chooseItem(item);
-}; // clickList
 
 accept() {
-this._typeahead.value = this._list.value().join (", ");
+this._typeahead.value = this.value();
 this.close ();
-this.dispatchEvent(new CustomEvent("change"));
+return true;
 } // accept
 
 cancel () {
@@ -161,19 +153,25 @@ this.close();
 this._typeahead.value = "";
 this.restoreList ();
 //this.blur();
+return true;
 } // cancel
 
 
 /// elements and items
 
 
+
 value () {
-return this.querySelectorAll("[aria-selected='true']")
-.map (node => this.valueOf(node));
+var nodes = this.querySelectorAll("[aria-selected='true']");
+var result = nodes.map (node => this.valueOf(node), this);
+
+return (result.length > 1)?
+result : result[0];
 } // value
 
 valueOf (node) {
 if (! node) return "";
+//alert (node.textContent);
 return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
 } // valueOf
@@ -242,6 +240,6 @@ this._status.textContent = text;
 
 })();
 
-alert	 ("autocomplete component loaded");
+//alert	 ("autocomplete component loaded");
 </script>
 

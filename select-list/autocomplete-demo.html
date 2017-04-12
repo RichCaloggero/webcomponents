@@ -130,8 +130,12 @@ South Dakota
 customElements.whenDefined("x-autocomplete").then (() => {
 var autocomplete = document.querySelector('x-autocomplete');
 autocomplete.addEventListener("change", function (e) {
-    message(autocomplete.valueOf().join(", "));
+message(autocomplete.value().toString());
 }); // change listener
+
+autocomplete.addEventListener("accept", function (e) {
+message(autocomplete.value().toString());
+}); // accept listener
 }); // component loaded
 
 function message (text) {

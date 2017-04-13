@@ -162,11 +162,7 @@ return true;
 
 
 value () {
-var nodes = this.querySelectorAll("[aria-selected='true']");
-var result = nodes.map (node => this.valueOf(node), this);
-
-return (result.length > 1)?
-result : result[0];
+return this._list.value ();
 } // value
 
 valueOf (node) {

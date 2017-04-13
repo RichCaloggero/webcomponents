@@ -142,12 +142,20 @@ this.dispatchEvent(new CustomEvent("cancel", {bubbles: true, composed: true}));
 
 
 value () {
+var nodes = getAllNodes (this._list, "[aria-selected='true']");
+//alert ("select-list.value: " + nodes.length + " " + nodes);
+return getAllNodes (this._list, "[aria-selected='true']")
+.map (node => this.valueOf(node));
+} // value
+
+/*value () {
 var nodes = this.querySelectorAll("[aria-selected='true']");
 var result = nodes.map (node => this.valueOf(node), this);
 
 return (result.length > 1)?
 result : result[0];
 } // value
+*/
 
 valueOf (node) {
 if (! node) return "";

@@ -11,10 +11,18 @@
 <body>
 <h1>x-label Demo</h1>
 
-<x-label>
-<span slot="label">My Label</span>
+<h2>test</h2>
+<div>
+<span id="test-label">My test label</span>
+<ul tabindex="0" aria-labelledby="test-label">
+<li>test item</li>
+</ul>
+</div>
 
-<select-List slot="body"><li>
+<x-label>
+<span aria-hidden="true" slot="label">My Label</span>
+
+<select-List><li>
 item 1
 </li><li>
 item 2

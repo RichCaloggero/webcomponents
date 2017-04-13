@@ -1,0 +1,40 @@
+<template id="x-label-template">
+<div class="x-label" role="group">
+<span id="label"><slot name="label"></slot></span>
+
+<span id="body" aria-labelledby="label">
+<slot name="body"></slot>
+</span>
+</div>
+</template>
+
+<script>
+"use strict";
+
+(function() {
+var template = document.querySelector("#x-label-template");
+
+customElements.define ("x-label", class extends HTMLElement {
+constructor () {
+super ();
+} // constructor
+
+connectedCallback () {
+var root = this.createRootElement ();
+
+} // connectedCallback
+
+createRootElement () {
+var root = this.attachShadow({delegatesFocus: true, mode: "open"});
+var content = template.content.cloneNode(true);
+root.appendChild(content);
+return root;
+} // createRootElement
+
+}); // custom element
+
+})();
+
+alert	 ("x-label component loaded");
+</script>
+

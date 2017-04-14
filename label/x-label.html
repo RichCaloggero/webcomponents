@@ -1,9 +1,8 @@
 <template id="x-label-template">
 <div class="x-label">
-<span id="label"><slot name="label"></slot></span>
+<span id="label"></span>
 
 <span id="body" aria-labelledby="label">
-<slot></slot>
 </span>
 </div>
 </template>
@@ -21,6 +20,10 @@ super ();
 
 connectedCallback () {
 var root = this.createRootElement ();
+var label = root.querySelector("#label");
+var textNodes = this.childNodes.map (node => node.type === 3)
+.forEach (node => label.appendChild(node));
+//alert ("text nodes: " + textNodes.length + " " + this.textContent);
 
 } // connectedCallback
 

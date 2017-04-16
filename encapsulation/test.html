@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+<meta charset="UTF-8">
+<title>ID encapsulation test</title>
+<script src="webcomponents-hi-sd-ce.js"></script>
+</head>
+<body>
+<h1>ID encapsulation test</h1>
+
+<x-t label="element 1"></x-t>
+
+<x-t label="element 2"></x-t>
+
+<template id="x-t-template">
+<div class="x-t">
+<span id="label"></span>
+<input aria-labelledby="label">
+</div>
+</template>
+
+<script>
+(function () {
+var template = document.querySelector ("#x-t-template");
+
+customElements.define ("x-t", class extends HTMLElement {
+constructor () {
+super ();
+
+this.attachShadow({delegatesFocus: true, mode: "open"})
+.appendChild (template.content.cloneNode(true));
+this.shadowRoot.querySelector ("#label").textContent = this.getAttribute("label") || "not labeled";
+} // constructor
+
+}); // define
+})(); // module
+
+</script>
+
+</body>
+</html>

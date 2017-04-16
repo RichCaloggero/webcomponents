@@ -70,14 +70,14 @@ init () {
 this.initOptions();
 
 this._root = this.createRootElement();
-this._control = this._root.querySelector(".selectList");
+this._control = this._root.querySelector(".select-list");
 this._label = this._root.querySelector("#label");
 this._list = this._root.querySelector(".listbox");
 this._status = this._root.querySelector(".status");
 
 if (this._options.label) {
 this._label.textContent = this._options.label;
-this._root.setAttribute ("aria-labelledby", "label");
+this._control.setAttribute ("aria-labelledby", "label");
 } // if
 
 } // init

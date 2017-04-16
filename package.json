@@ -1,0 +1,13 @@
+{
+"name": "webcomponents",
+"version": "1.0.0",
+
+"repository" : {
+"type" : "git"
+, "url" : "https://github.com/RichCaloggero/webcomponents.git"
+},
+
+"dependencies": {
+"keyboard-navigation": "git://github.com/RichCaloggero/keyboard-navigation.git"
+}
+}

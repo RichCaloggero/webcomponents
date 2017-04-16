@@ -1,12 +1,17 @@
 <template id="x-label-template">
 <div class="x-label">
-<span id="label"></span>
+<span id="label">
+<slot></slot>
+</span>
 
-<span id="body" aria-labelledby="label">
+<span id="body" role="group" aria-labelledby="label">
+<slot name="body"></slot>
 </span>
 </div>
 </template>
 
+<script src="jquery.min.js"></script>
+<script src="debug.js"></script>
 <script>
 "use strict";
 
@@ -16,15 +21,16 @@ var template = document.querySelector("#x-label-template");
 customElements.define ("x-label", class extends HTMLElement {
 constructor () {
 super ();
+var root = this.createRootElement ();
 } // constructor
 
 connectedCallback () {
-var root = this.createRootElement ();
-var label = root.querySelector("#label");
-var textNodes = this.childNodes.map (node => node.type === 3)
-.forEach (node => label.appendChild(node));
-//alert ("text nodes: " + textNodes.length + " " + this.textContent);
+debug("labeling ", this.textContent);
+this.normalize ();
 
+Array.from(this.childNodes)
+.filter(node => node.nodeType === 1)
+.forEach (node => node.setAttribute ("slot", "body"));
 } // connectedCallback
 
 createRootElement () {

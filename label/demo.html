@@ -12,12 +12,30 @@
 <h1>x-label Demo</h1>
 
 <h2>test</h2>
+
+<div role="group">
+<span id="l1">Manual label 1</span>
+<p aria-labelledby="l1" tabindex="0">a paragraph</p>
+</div>
+
+<div role="group">
+<span id="l2">Manual label 2</span>
+<ul aria-labelledby="l2"> role="listbox">
+<li tabindex="0" role="option">list item 1</li>
+</ul>
+</div>
+
+
+<hr>
+<h2>Automatic</h2>
+
 <x-label>
-this is label text, not labeling anything
+this is label text
+<p tabindex="0">A focusable paragraph</p>
 </x-label>
 
 <x-label>
-<span aria-hidden="true" slot="label">My Label</span>
+My Label
 
 <select-List><li>
 item 1
@@ -26,6 +44,10 @@ item 2
 </li><li>
 item 3
 </li></select-list>
+</x-label>
+
+<div role="region" aria-label="debug" id="debug" aria-live="polite">
+</div>
 
 </body>
 </html>

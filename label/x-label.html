@@ -1,17 +1,18 @@
 <template id="x-label-template">
 <div class="x-label">
-<span id="label">
+<span class="label">
 <slot></slot>
 </span>
 
-<span id="body" role="group" aria-labelledby="label">
+<span class="body" role="group">
 <slot name="body"></slot>
 </span>
 </div>
 </template>
 
-<script src="jquery.min.js"></script>
+<!--<script src="jquery.min.js"></script>
 <script src="debug.js"></script>
+-->
 <script>
 "use strict";
 
@@ -22,10 +23,12 @@ customElements.define ("x-label", class extends HTMLElement {
 constructor () {
 super ();
 var root = this.createRootElement ();
+var id = idGen ("label-");
+root.querySelector (".label").setAttribute ("id", id);
+root.querySelector (".body").setAttribute ("aria-labelledby", id);
 } // constructor
 
 connectedCallback () {
-debug("labeling ", this.textContent);
 this.normalize ();
 
 Array.from(this.childNodes)
@@ -41,6 +44,16 @@ return root;
 } // createRootElement
 
 }); // custom element
+
+function idGen (stem) {
+var nextPositiveInteger = positiveIntegers();
+return stem + nextPositiveInteger.value;
+
+function* positiveIntegers () {
+let n = 0;
+while (true) yield ++n;
+} // positiveIntegers
+} // idGen
 
 })();
 

@@ -46,14 +46,15 @@ return root;
 }); // custom element
 
 function idGen (stem) {
-var nextPositiveInteger = positiveIntegers();
-return stem + nextPositiveInteger.value;
+return stem + positiveIntegers.next().value;
+} // idGen
 
-function* positiveIntegers () {
+var positiveIntegers = generatePositiveIntegers();
+
+function* generatePositiveIntegers () {
 let n = 0;
 while (true) yield ++n;
 } // positiveIntegers
-} // idGen
 
 })();
 

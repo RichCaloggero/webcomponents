@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "keyboard-navigation": "https://github.com/RichCaloggero/keyboard-navigation.git",
-    "webcomponentsjs": "^1.0.0-rc.7"
+    "webcomponentsjs": "^1.0.0-rc.8"
   }
 }
   

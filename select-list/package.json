@@ -1,0 +1,8 @@
+{
+  "name": "select-list",
+  "version": "1.0.0",
+  "main": "select-list.component.js",
+  "scripts": {
+    "build": "browserify select-list.js -o select-list.component.js"
+  }
+}

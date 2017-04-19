@@ -11,35 +11,23 @@
 <body>
 <h1>x-label Demo</h1>
 
-<h2>test</h2>
-<div>
-<span id="l-hidden" style="display:none">My Hidden Label</span>
-<input aria-labelledby="l-hidden">
-</div>
 
-<div role="group">
-<span id="l1">Manual label 1</span>
-<p aria-labelledby="l1" tabindex="0">a paragraph</p>
-</div>
-
-<div role="group">
-<span id="l2">Manual label 2</span>
-<ul aria-labelledby="l2"> role="listbox">
-<li tabindex="0" role="option">list item 1</li>
-</ul>
-</div>
-
-
-<hr>
-<h2>Automatic</h2>
-
+<h2>Label a focusable paragraph</h2>
 <x-label>
-this is label text
+My focusable paragraph
+
 <p tabindex="0">A focusable paragraph</p>
 </x-label>
 
+<h2>Label an input</h2>
 <x-label>
-My Label
+My labeled input
+<input type="range" min=0 max=100>
+</x-label>
+
+<h2>Label a select-list component</h2>
+<x-label>
+My Labeled select list
 
 <select-List><li>
 item 1

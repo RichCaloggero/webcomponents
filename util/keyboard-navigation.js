@@ -80,8 +80,10 @@ function getAllNodes(nodes) {
     } // if
   } // flatten
 } // getAllNodes
-"use strict";
 
+/// keyboardNavigation
+
+module.exports = keyboardNavigation;
 function keyboardNavigation(container, options) {
   var focusedNode = null;
   var searchTimer = null;
@@ -319,7 +321,7 @@ function keyboardNavigation(container, options) {
   } // getNodes
 
 
-  /// default actions
+// default actions
 
   function nextItem(node) {
     return nextSibling(node, options.nodeSelector + options.activeNodeSelector);

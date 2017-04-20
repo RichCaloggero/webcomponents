@@ -1,47 +1,56 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 var keyboardNavigation = require ("../util/keyboardNavigation");
-var dom = require ("../util/dom");
 
-var template = document.querySelector("#select-list-template");
+var template = document.querySelector("#autocomplete-template");
+var searchText = "";
+var filterText = "";
 
-customElements.define ("select-list", class extends HTMLElement {
+customElements.define ("x-autocomplete", class extends HTMLElement {
 constructor () {
 super ();
 } // constructor
 
 connectedCallback () {
+var self = this;
+customElements.whenDefined("select-list").then (function () {
 this.init();
 this.render();
+}.bind(this)); // when defined
 } // connectedCallback
 
 init () {
 this.initOptions();
 
+this._filterText = "";
 this._root = this.createRootElement();
-this._control = this._root.querySelector(".select-list");
-this._label = this._root.querySelector("#label");
-this._list = this._root.querySelector(".listbox");
-this._status = this._root.querySelector(".status");
+this._control = this._root.querySelector('.autocomplete');
+this._typeahead = this._root.querySelector('.typeahead');
+this._labelText = this._root.querySelector('label .text');
+this._popup = this._root.querySelector('.autocomplete-popup');
+this._list = this._root.querySelector('.autocomplete-list');
+this._status = this._root.querySelector('.status');
 
-if (this._options.label) {
-this._label.textContent = this._options.label;
-this._control.setAttribute ("aria-labelledby", "label");
-} // if
+this._labelText.textContent = this._options.label;
+this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
 
 } // init
 
 initOptions () {
 this._options = {
-multiselect: this.hasAttribute("multiselect"),
-embedded: this.hasAttribute("embedded"),
-label: this.getAttribute("label") || ""
-}; // this._options
+label: this.getAttribute("label") || '',
+showStatusMessages: this.getAttribute("showStatusMessages")
+}; // options
 } // initOptions
 
 createRootElement () {
 var root = this.attachShadow({delegatesFocus: true, mode: "open"});
 var content = template.content.cloneNode(true);
+
+/*if (window.ShadowDOMPolyfill) {
+WebComponents.ShadowCSS.shimStyling(content, 'x-autocomplete');
+}
+*/
 
 root.appendChild(content);
 
@@ -55,59 +64,80 @@ this.attachHandlers();
 
 attachHandlers () {
 var self = this;
+this._typeahead.addEventListener ("keydown", this.handleOpenOnDownArrow.bind(this));
+this._typeahead.addEventListener ("input", this.handleListFilter.bind(this));
 
-this.currentItem = keyboardNavigation(this._list, {
-multiselect: this._options.multiselect,
-embedded: this._options.embedded,
-activeNodeSelector: ":not([hidden])",
-
-actions: {
-toggleSelection: this.toggleSelection.bind(this),
-accept: this.accept.bind(this),
-cancel: this.cancel.bind(this)
-}, // actions
-
-keymap: {
-toggleSelection: [" "],
-accept: ["Enter"],
-cancel: ["Escape"]
-} // keymap
-}); // keyboardNavigation
+this._list.addEventListener ("accept", this.accept.bind(this));
+this._list.addEventListener ("cancel", this.cancel.bind(this));
+this._list.addEventListener("click", this.accept.bind(this));
 
 } // attachHandlers
 
-toggleSelection (node) {
-if (!node || !this._options.multiselect) return;
+handleOpenOnDownArrow (e) {
+if (e.key === "ArrowDown") {
+this.open ();
+this._list.currentItem().focus();
+e.preventDefault();
+e.stopPropagation();
+e.stopImmediatePropagation();
+return false;
+} // if
 
-node.setAttribute ("aria-selected",
-(node.getAttribute("aria-selected") === "true")? "false" : "true"
-); // setAttribute
-} // toggleSelection
+return true;
+} // handleOpenOnDownArrow
 
-accept () {
-this.dispatchEvent(new CustomEvent("accept", {bubbles: true, composed: true}));
+
+handleListFilter (e) {
+//console.log("filter: ", e);
+this.open();
+this.filterList (this._typeahead.value);
+} // handleListFilter
+
+filterList (text) {
+this.restoreList ();
+
+if (text) {
+text = text.toLowerCase().trim();
+//debug ("filter: ", text);
+this.allElements().forEach (function (element) {
+var elementText = element.textContent.toLowerCase().trim();
+//debug ("- ", elementText.startsWith(text), elementText);
+if (!elementText.startsWith(text)) element.setAttribute ("hidden", "true");
+}); // forEach
+} // if
+
+this.displayItemCount ();
+} // filterList 
+
+restoreList () {
+this.allElements().forEach (function (element) {
+element.removeAttribute ("hidden");
+}); // forEach
+} // restoreList
+
+
+accept() {
+this._typeahead.value = this.value();
+this.close ();
+return true;
 } // accept
 
 cancel () {
-this.dispatchEvent(new CustomEvent("cancel", {bubbles: true, composed: true}));
+this.close();
+this._typeahead.value = "";
+this.restoreList ();
+//this.blur();
+return true;
 } // cancel
 
 
+/// elements and items
+
+
+
 value () {
-var nodes = dom.getAllNodes (this._list, "[aria-selected='true']");
-//alert ("select-list.value: " + nodes.length + " " + nodes);
-return dom.getAllNodes (this._list, "[aria-selected='true']")
-.map (node => this.valueOf(node));
+return this._list.value ();
 } // value
-
-/*value () {
-var nodes = this.querySelectorAll("[aria-selected='true']");
-var result = nodes.map (node => this.valueOf(node), this);
-
-return (result.length > 1)?
-result : result[0];
-} // value
-*/
 
 valueOf (node) {
 if (! node) return "";
@@ -116,9 +146,58 @@ return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
 } // valueOf
 
+selectedElements () {
+return Array.from(this.querySelectorAll("[selected]"));
+} // selectedElements
+
+allElements () {
+return Array.from(this.querySelectorAll("[role=option]"));
+} // allElements
+
+selectAll () {
+this.allElements().forEach (e => this.selectItem(e));
+} // selectAll
+
+unselectAll () {
+this.allElements().forEach (e => this.unselectItem(e));
+} // unselectAll
+
+
+fireChangeEvent () {
+var event = new CustomEvent("change");
+this.dispatchEvent(event);
+};
+
+
+
+itemElements (selector) {
+selector = selector || "li:not([hidden])";
+return Array.from(this.querySelectorAll(selector));
+}; // itemElements
+
+
+attributeChangedCallback (optionName, oldValue, newValue) {
+this._options[optionName] = newValue;
+};
+
+open () {
+this.togglePopup(true);
+} // open
+
+close () {
+this.togglePopup(false);
+this._typeahead.focus();
+} // close
+
+togglePopup (show) {
+this._isOpened = show;
+this._popup.style.display = show ? 'block' : 'none';
+this._control.setAttribute("aria-expanded", show? "true" : "false");
+} // togglePopup
+
 
 displayItemCount (text) {
-this.statusMessage (this.querySelectorAll("[role=option]").length + " " + (text || "items"));
+this.statusMessage (this.itemElements().length + " " + (text || "items"));
 } // displayItemCount
 
 statusMessage (text) {
@@ -127,9 +206,11 @@ this._status.textContent = text;
 
 }); // custom element
 
-//alert	 ("selectList.js loaded");
 
-},{"../util/dom":2,"../util/keyboardNavigation":3}],2:[function(require,module,exports){
+//alert	 ("autocomplete component loaded");
+
+
+},{"../util/keyboardNavigation":3}],2:[function(require,module,exports){
 "use strict";
 /// DOM traversal
 

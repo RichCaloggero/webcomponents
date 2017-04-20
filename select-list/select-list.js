@@ -95,7 +95,7 @@ this.dispatchEvent(new CustomEvent("cancel", {bubbles: true, composed: true}));
 value () {
 var nodes = dom.getAllNodes (this._list, "[aria-selected='true']");
 //alert ("select-list.value: " + nodes.length + " " + nodes);
-return getAllNodes (this._list, "[aria-selected='true']")
+return dom.getAllNodes (this._list, "[aria-selected='true']")
 .map (node => this.valueOf(node));
 } // value
 

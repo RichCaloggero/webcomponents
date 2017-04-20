@@ -1,33 +1,6 @@
-<template id="autocomplete-template">
-<style>
-.screen-reader-only {
-position: absolute;
-overflow: none;
-left: -9999; top: -9999;
-}
-</style>
-
-<div class="autocomplete" role="combobox" aria-expanded="false">
-<label>
-<span class="text"></span>
-<br><input type="text" class="typeahead">
-</label>
-
-<div class="autocomplete-popup">
-<select-list class="autocomplete-list" embedded>
-<slot></slot>
-</select-list>
-</div>
-
-<div class="status screen-reader-only" aria-live="polite"></div>
-</div>
-</template>
-
-<link rel="import" href="select-list.html">
-<script>
 "use strict";
+var keyboardNavigation = require ("../util/keyboardNavigation");
 
-(function() {
 var template = document.querySelector("#autocomplete-template");
 var searchText = "";
 var filterText = "";
@@ -233,9 +206,5 @@ this._status.textContent = text;
 }); // custom element
 
 
-
-})();
-
 //alert	 ("autocomplete component loaded");
-</script>
 

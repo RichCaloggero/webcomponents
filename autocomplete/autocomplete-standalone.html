@@ -1,0 +1,312 @@
+<template id="autocompleteTemplate">
+<style>
+.screen-reader-only {
+position: absolute;
+overflow: none;
+left: -9999; top: -9999;
+}
+
+.autocomplete {
+position: relative;
+box-sizing: border-box;
+display: inline-block;
+width: 20em;
+}
+
+.autocomplete-popup {
+position: absolute;
+z-index: 1000;
+display: none;
+overflow-y: auto;
+width: 100%;
+max-height: 300px;
+box-sizing: border-box;
+border: 1px solid #bdbdbd;
+border-radius: .2em;
+background: white;
+}
+
+.autocomplete-list {
+padding: 0;
+margin: 0;
+}
+
+::content li {
+padding: .5em 1em;
+min-height: 1em;
+list-style: none;
+cursor: pointer;
+}
+
+::content li[hidden] {
+display: none;
+}
+
+::content li:focus {
+outline: dotted 1px #333;
+background: #e9e9e9;
+}
+
+::content li:hover {
+background: #e9e9e9;
+}
+</style>
+
+<div class="autocomplete" role="combobox" aria-expanded="false">
+<label>
+<span class="text"></span>
+<br><input type="text" class="typeahead">
+</label>
+
+<div class="autocomplete-popup">
+<ul class="autocomplete-list">
+<slot></slot>
+</ul>
+</div>
+
+<div class="status screen-reader-only" aria-live="polite"></div>
+</div>
+</template>
+
+<script src="../bower_components/keyboard-navigation/keyboardNavigation.js"></script>
+
+<script>
+"use strict";
+var template = document.querySelector('#autocompleteTemplate');
+
+(function() {
+var searchTimer = null;
+var searchText = "";
+var filterText = "";
+
+customElements.define ("x-autocomplete", class extends HTMLElement {
+constructor () {
+super ();
+//debug ("x-autocomplete element created");
+} // constructor
+
+connectedCallback () {
+this.init();
+this.render();
+} // connectedCallback
+
+init () {
+this.initOptions();
+
+this._filterText = "";
+this._root = this.createRootElement();
+this._control = this._root.querySelector('.autocomplete');
+this._typeahead = this._root.querySelector('.typeahead');
+this._labelText = this._root.querySelector('label .text');
+this._popup = this._root.querySelector('.autocomplete-popup');
+this._list = this._root.querySelector('.autocomplete-list');
+this._status = this._root.querySelector('.status');
+
+this._labelText.textContent = this._options.label;
+this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
+
+} // init
+
+initOptions () {
+this._options = {
+label: this.getAttribute("label") || '',
+showStatusMessages: this.getAttribute("showStatusMessages")
+}; // options
+} // initOptions
+
+createRootElement () {
+var root = this.attachShadow({delegatesFocus: true, mode: "open"});
+var content = template.content.cloneNode(true);
+
+/*if (window.ShadowDOMPolyfill) {
+WebComponents.ShadowCSS.shimStyling(content, 'x-autocomplete');
+}
+*/
+
+root.appendChild(content);
+
+//debug ("- root created");
+return root;
+} // createRootElement
+
+render () {
+this.attachHandlers();
+
+//debug ("render complete.");
+} // render
+
+attachHandlers () {
+var self = this;
+this._typeahead.addEventListener ("keydown", this.handleOpenOnDownArrow.bind(this));
+this._typeahead.addEventListener ("input", this.handleListFilter.bind(this));
+
+
+this._list.addEventListener('click', this.clickList.bind(this));
+
+
+this.currentItem = keyboardNavigation(this._list, {
+embedded: true, // part of another widget - do not set tabindex="0"
+activeNodeSelector: ":not([hidden])",
+
+actions: {
+escape: this.escape.bind(this),
+choose: this.chooseItem.bind(this)
+}, // actions
+
+keymap: {
+escape: ["Escape"],
+choose: ["Enter"]
+} // keymap
+}); // keyboardNavigation
+
+//debug ("currentItem: ", this.currentItem, " value = ", this.currentItem().outerHTML);
+} // attachHandlers
+
+handleOpenOnDownArrow (e) {
+if (e.key === "ArrowDown") {
+this.open ();
+//debug ("setting focus to ", this.currentItem().outerHTML);
+this.currentItem().focus();
+e.preventDefault();
+e.stopPropagation();
+e.stopImmediatePropagation();
+return false;
+} // if
+
+return true;
+} // handleOpenOnDownArrow
+
+
+handleListFilter (e) {
+console.log("filter: ", e);
+this.open();
+this.filterList (this._typeahead.value);
+} // handleListFilter
+
+filterList (text) {
+this.restoreList ();
+
+if (text) {
+text = text.toLowerCase().trim();
+//debug ("filter: ", text);
+this.allElements().forEach (function (element) {
+var elementText = element.textContent.toLowerCase().trim();
+//debug ("- ", elementText.startsWith(text), elementText);
+if (!elementText.startsWith(text)) element.setAttribute ("hidden", "true");
+}); // forEach
+} // if
+
+this.displayItemCount ();
+} // filterList 
+
+restoreList () {
+this.allElements().forEach (function (element) {
+element.removeAttribute ("hidden");
+}); // forEach
+} // restoreList
+
+clickList (e) {
+var item = e.target;
+while(item && item.tagName !== 'LI') {
+item = item.parentNode;
+}
+
+this.chooseItem(item);
+}; // clickList
+
+escape () {
+this.close();
+this._typeahead.value = "";
+this.restoreList ();
+this.blur();
+} // escape
+
+chooseItem (item) {
+this._typeahead.value = (item.hasAttribute("value"))?
+item.getAttribute("value") : item.textContent;
+this.close ();
+this.fireChangeEvent ();
+} // chooseItem
+
+/// elements and items
+
+selectedElements () {
+return Array.from(this.querySelectorAll("[selected]"));
+} // selectedElements
+
+allElements () {
+return Array.from(this.querySelectorAll("[role=option]"));
+} // allElements
+
+selectAll () {
+this.allElements().forEach (e => this.selectItem(e));
+} // selectAll
+
+unselectAll () {
+this.allElements().forEach (e => this.unselectItem(e));
+} // unselectAll
+
+
+fireChangeEvent () {
+var event = new CustomEvent("change");
+this.dispatchEvent(event);
+};
+
+
+
+itemElements (selector) {
+selector = selector || "li:not([hidden])";
+return Array.from(this.querySelectorAll(selector));
+}; // itemElements
+
+
+attributeChangedCallback (optionName, oldValue, newValue) {
+this._options[optionName] = newValue;
+};
+
+open () {
+this.togglePopup(true);
+} // open
+
+close () {
+this.togglePopup(false);
+this._typeahead.focus();
+} // close
+
+togglePopup (show) {
+this._isOpened = show;
+this._popup.style.display = show ? 'block' : 'none';
+this._control.setAttribute("aria-expanded", show? "true" : "false");
+} // togglePopup
+
+
+
+itemValue (item) {
+if (! item) return "";
+return (item.hasAttribute("value"))?
+item.getAttribute("value") : item.textContent;
+} // itemValue
+
+valueOf () {
+return this._typeahead.value;
+} // valueOf
+
+displayItemCount (text) {
+this.statusMessage (this.itemElements().length + " " + (text || "items"));
+} // displayItemCount
+
+statusMessage (text) {
+this._status.textContent = text;
+} // statusMessage
+
+}); // custom element
+
+
+
+
+
+})();
+
+//alert	 ("autocomplete component loaded");
+</script>
+

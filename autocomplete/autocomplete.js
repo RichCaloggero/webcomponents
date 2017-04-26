@@ -1,5 +1,5 @@
 "use strict";
-var keyboardNavigation = require ("../util/keyboardNavigation");
+var idGen = require ("../util/idGen");
 
 var template = document.querySelector("#autocomplete-template");
 var searchText = "";
@@ -30,6 +30,11 @@ this._popup = this._root.querySelector('.autocomplete-popup');
 this._list = this._root.querySelector('.autocomplete-list');
 this._status = this._root.querySelector('.status');
 
+if (this._options.activedescendant) {
+this._activedescendant = idGen("autocomplete-activedescendant-");
+this._list.setAttribute ("activedescendant", this._activedescendant);
+} // if
+
 this._labelText.textContent = this._options.label;
 this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMessages);
 
@@ -37,7 +42,8 @@ this._status.classList.toggle ("screen-reader-only", !this._options.showStatusMe
 
 initOptions () {
 this._options = {
-label: this.getAttribute("label") || '',
+activedescendant: this.hasAttribute("activedescendant"),
+label: this.getAttribute("label") || "",
 showStatusMessages: this.getAttribute("showStatusMessages")
 }; // options
 } // initOptions
@@ -69,13 +75,20 @@ this._typeahead.addEventListener ("input", this.handleListFilter.bind(this));
 this._list.addEventListener ("accept", this.accept.bind(this));
 this._list.addEventListener ("cancel", this.cancel.bind(this));
 this._list.addEventListener("click", this.accept.bind(this));
+if (this._options.activedescendant) this._list.addEventListener ("activedescendant", (e => this.updateActivedescendant.call(this, e.target)));
 
 } // attachHandlers
 
 handleOpenOnDownArrow (e) {
 if (e.key === "ArrowDown") {
 this.open ();
+
+if (this._options.activedescendant) {
+this.control.setAttribute ("aria-activedescendant", this._activedescendant);
+} else {
 this._list.currentItem().focus();
+} // if
+
 e.preventDefault();
 e.stopPropagation();
 e.stopImmediatePropagation();
@@ -129,10 +142,12 @@ this.restoreList ();
 return true;
 } // cancel
 
+updateActivedescendant (node) {
+this._control.setAttribute ("aria-activedescendant", node.getAttribute("id"));
+} // updateActivedescendant
+
 
 /// elements and items
-
-
 
 value () {
 return this._list.value ();
@@ -185,7 +200,14 @@ this.togglePopup(true);
 
 close () {
 this.togglePopup(false);
+
+if (this._options.activedescendant) {
+this._control.removeAttribute ("aria-activedescendant");
+} else {
 this._typeahead.focus();
+} // if
+
+this._control.removeAttribute ("aria-controls");
 } // close
 
 togglePopup (show) {
@@ -206,5 +228,5 @@ this._status.textContent = text;
 }); // custom element
 
 
-//alert	 ("autocomplete component loaded");
+alert	 ("autocomplete component loaded");
 

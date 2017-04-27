@@ -584,7 +584,7 @@ text = text.toLowerCase().trim();
 node = find (getNodes(), function (element) {
 var elementText = element.textContent.toLowerCase().trim();
 return elementText.startsWith (text);
-}, indexOf(current()));
+}, dom.indexOf(current()));
 
 if (node) current (node.closest("li"), "search");
 return node;

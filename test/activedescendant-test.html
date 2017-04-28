@@ -27,6 +27,8 @@ switch (e.key) {
 case "ArrowDown": move(next(getCurrent())); return false;
 case "ArrowUp": move(prev(getCurrent())); return false;
 case "Escape": close(); return false;
+case "Enter": choose (); return false;
+
 default: return true;
 } // switch
 }); // keydown
@@ -34,16 +36,21 @@ default: return true;
 $("input").on ("input", function (e) {
 clearAttributes ();
 $("ul").empty();
-createList (listItems.filter (item => item.includes($("input").val())));
+filterList ($("input").val());
+
 if (isClosed() && itemCount() > 0) open();
 }); // input
 
-function itemCount () {
-return $("ul li").length;
-} // itemCount
+function filterList (text) {
+if (! text) return;
+
+$("ul").empty();
+createList (listItems.filter (item => item.includes(text)));
+} // filterList
 
 function move ($node) {
 if (! $node || $node.length !== 1) return null;
+filterList ($("input").val());
 //alert ("moving to " + $node.text());
 $("ul li").removeAttr ("aria-selected");
 $node.attr ({"aria-selected": "true"});
@@ -75,15 +82,6 @@ $node.prev()
 : $node.parent().children().last();
 } // prev
 
-function getCurrent () {
-if (isClosed()) return null;
-return $("#" + $("input").attr("aria-activedescendant"));
-} // getCurrent
-
-function isClosed () {
-return $("[role=combobox]").attr ("aria-expanded") === "false"
-|| !$("input").attr("aria-activedescendant");
-} // isClosed
 
 function open () {
 $("ul").show ();
@@ -91,12 +89,25 @@ setAttributes ();
 $("[role=combobox]").attr ("aria-expanded", "true");
 } // open
 
+function choose () {
+if (! getCurrent()) return "";
+$("input").val (getCurrent().text());
+close ();
+return getCurrent ();
+} // choose
+
+
 function close () {
-$("ul").hide(function () {
-$("[role=combobox]").attr ("aria-expanded", "false");
+$("ul").hide();
+
 clearAttributes ();
-}); // hide
+$("[role=combobox]").attr ("aria-expanded", "false");
 } // close
+
+function isClosed () {
+return $("[role=combobox]").attr ("aria-expanded") === "false"
+|| !$("input").attr("aria-activedescendant");
+} // isClosed
 
 function setAttributes () {
 $("input").attr ({"aria-controls": "list"});
@@ -106,13 +117,28 @@ function clearAttributes () {
 $("input").removeAttr ("aria-controls aria-activedescendant");
 } // clearAttributes
 
+function isActive () {
+return 
+} // isActive
+
+function getCurrent () {
+if (isClosed()) return null;
+return $("#" + $("input").attr("aria-activedescendant"));
+} // getCurrent
+
+function itemCount () {
+return $("ul li").length;
+} // itemCount
+
+
+
 function createList (items) {
 items.forEach ((text, i) => $("ul").append(`<li role="option" id="item${i+1}">${text}</li>\n`));
 displayItemCount ();
 } // createList
 
 function displayItemCount () {
-$(".itemCount").html (`<p>${$("ul li").length} items</p>\n`);
+$(".itemCount").html (`<p>${itemCount()} items</p>\n`);
 } // displayItemCount
 
 //alert ("loaded");

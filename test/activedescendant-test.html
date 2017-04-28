@@ -35,14 +35,12 @@ default: return true;
 
 $("input").on ("input", function (e) {
 clearAttributes ();
-$("ul").empty();
 filterList ($("input").val());
-
 if (isClosed() && itemCount() > 0) open();
 }); // input
 
 function filterList (text) {
-if (! text) return;
+//if (! text) return;
 
 $("ul").empty();
 createList (listItems.filter (item => item.includes(text)));
@@ -50,7 +48,6 @@ createList (listItems.filter (item => item.includes(text)));
 
 function move ($node) {
 if (! $node || $node.length !== 1) return null;
-filterList ($("input").val());
 //alert ("moving to " + $node.text());
 $("ul li").removeAttr ("aria-selected");
 $node.attr ({"aria-selected": "true"});
@@ -92,6 +89,7 @@ $("[role=combobox]").attr ("aria-expanded", "true");
 function choose () {
 if (! getCurrent()) return "";
 $("input").val (getCurrent().text());
+$("input").trigger ("input");
 close ();
 return getCurrent ();
 } // choose

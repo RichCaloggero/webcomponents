@@ -2,10 +2,10 @@
 <html>
 <head lang="en">
 <meta charset="UTF-8">
-<title>Test</title>
+<title>activedescendant test</title>
 </head>
 <body>
-<h1>Test</h1>
+<h1>activedescendant test</h1>
 
 <div role="combobox" aria-expanded="false" aria-haspopup="listbox">
 <label>choose something:
@@ -32,14 +32,18 @@ default: return true;
 }); // keydown
 
 $("input").on ("input", function (e) {
-if (! isClosed()) clearAttributes ();
+clearAttributes ();
 $("ul").empty();
 createList (listItems.filter (item => item.includes($("input").val())));
-if (isClosed() && $("ul li").length > 0) open();
+if (isClosed() && itemCount() > 0) open();
 }); // input
 
+function itemCount () {
+return $("ul li").length;
+} // itemCount
+
 function move ($node) {
-if (! $node) return null;
+if (! $node || $node.length !== 1) return null;
 //alert ("moving to " + $node.text());
 $("ul li").removeAttr ("aria-selected");
 $node.attr ({"aria-selected": "true"});
@@ -82,17 +86,16 @@ return $("[role=combobox]").attr ("aria-expanded") === "false"
 } // isClosed
 
 function open () {
-$("ul").show (function () {
-$("[role=combobox]").attr ("aria-expanded", "true");
+$("ul").show ();
 setAttributes ();
-}); // show
+$("[role=combobox]").attr ("aria-expanded", "true");
 } // open
 
 function close () {
 $("ul").hide(function () {
 $("[role=combobox]").attr ("aria-expanded", "false");
 clearAttributes ();
-}); // show
+}); // hide
 } // close
 
 function setAttributes () {
@@ -112,7 +115,7 @@ function displayItemCount () {
 $(".itemCount").html (`<p>${$("ul li").length} items</p>\n`);
 } // displayItemCount
 
-alert ("loaded");
+//alert ("loaded");
 </script>
 
 </body>

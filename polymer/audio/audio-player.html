@@ -33,19 +33,14 @@ observer: "srcChanged"
 } // get properties
 
 constructor () {
-var parentName;
 super ();
-parentName = this.parentNode.localName;
-if (parentName !== "audio-series" && parentName !== "audio-parallel") {
-alert ("audio-player must be child of audio-series or audio-parallel");
-throw ("audio graph errror");
-} // if
-
 } // constructor
 
 connectedCallback  () {
 super.connectedCallback();
+if (this.contextCheck(AudioPlayer.is)) {
 this.audioNode = audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
+} // if
 } // connectedCallback
 
 srcChanged (_src) {

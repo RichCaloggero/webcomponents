@@ -22,13 +22,25 @@ return;
 } // if
 
 if (window.audio) {
-alert ("only one audio context per document");
+//alert ("only one audio context per document");
 } else {
 window.audio = new AudioContext();
 } // if
 
 this.audio = window.audio;
 } // constructor
+
+contextCheck (name) {
+var parentName = this.parentNode.localName;
+//alert ("parentName: " + parentName);
+if (parentName !== "audio-series" && parentName !== "audio-parallel") {
+alert (`${name} : element must be child of audio-parallel or audio-series to participate in audio graph`);
+//throw new Error ("audio graph error");
+return false;
+} // if
+
+return true;
+} // contextCheck
 
 
 } // class _AudioContext_

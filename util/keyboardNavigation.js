@@ -14,6 +14,7 @@ type: "list", // list, tree, or menu
 embedded: false, // if embedded in another widget, will not maintain tabindex="0" on container or child element
 multiselect: false,
 applyAria: true,
+activedescendant: false,
 nodeSelector: "li",
 activeNodeSelector: "",
 groupSelector: "ul",
@@ -99,11 +100,13 @@ return false;
 function current (node, search) {
 if (node) {
 setFocusedNode (node, search);
-node.focus ();
-if (! options.multiselect) {
+if (! options.activedescendant) node.focus ();
+
+/*if (! options.multiselect) {
 setAttributes("aria-selected"); // removes the attribute completely
 node.setAttribute("aria-selected", "true");
 } // if
+*/
 return node;
 
 } else {
@@ -124,7 +127,11 @@ focusedNode : initialFocus();
 function setFocusedNode (node, search) {
 if (! node) return;
 focusedNode = node;
-if (! options.embedded) {
+
+if (options.embedded) {
+setAttributes ("id"); // remove all id attributes from nodes
+node.setAttribute ("id", options.activedescendant);
+} else {
 setAttributes ("tabindex", "-1");
 focusedNode.setAttribute ("tabindex", "0");
 } // if
@@ -136,7 +143,10 @@ focusedNode.setAttribute ("aria-selected", "true");
 } // if
 
 if (search && options.type === "tree") definePath (node);
+
+node.dispatchEvent(new CustomEvent("activedescendant", {composed: true, bubbles: true}));
 } // setFocusedNode
+
 
 function definePath (node) {
 var root = node.closest ("[role=tree]");
@@ -339,4 +349,4 @@ return result;
 return current;
 } // keyboardNavigation
 
-//alert ("keyboardNavigation.js loaded");
+alert ("keyboardNavigation.js loaded");

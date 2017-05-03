@@ -8,6 +8,7 @@ var template = document.querySelector("#select-list-template");
 customElements.define ("select-list", class extends HTMLElement {
 constructor () {
 super ();
+this._root = this.createRootElement();
 } // constructor
 
 connectedCallback () {
@@ -17,16 +18,17 @@ this.render();
 
 init () {
 this.initOptions();
+alert ("select-list activedescendant: " + this._options.activedescendant);
 
-this._root = this.createRootElement();
 this._control = this._root.querySelector(".select-list");
 this._label = this._root.querySelector("#label");
 this._list = this._root.querySelector(".listbox");
 this._status = this._root.querySelector(".status");
 
 if (this._options.label) {
+this._label.setAttribute ("id", idGen("select-list-label-"));
 this._label.textContent = this._options.label;
-this._control.setAttribute ("aria-labelledby", "label");
+this._control.setAttribute ("aria-labelledby", this._label.getAttribute("id"));
 } // if
 
 } // init
@@ -35,6 +37,7 @@ initOptions () {
 this._options = {
 multiselect: this.hasAttribute("multiselect"),
 embedded: this.hasAttribute("embedded"),
+activedescendant: this.getAttribute("activedescendant") || "",
 label: this.getAttribute("label") || ""
 }; // this._options
 } // initOptions
@@ -59,6 +62,7 @@ var self = this;
 this.currentItem = keyboardNavigation(this._list, {
 multiselect: this._options.multiselect,
 embedded: this._options.embedded,
+activedescendant: this._options.activedescendant,
 activeNodeSelector: ":not([hidden])",
 
 actions: {
@@ -116,6 +120,17 @@ return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
 } // valueOf
 
+static get observedAttributes() {
+return ["activedescendant"];
+}
+
+attributeChangedCallback (name, oldValue, newValue) {
+this._options[name] = newValue;
+alert ("attributeChanged: " + name + "=" + newValue);
+
+if (name === "activedescendant") this.currentItem (this.currentItem());
+} // attributeChangedCallback
+
 
 displayItemCount (text) {
 this.statusMessage (this.querySelectorAll("[role=option]").length + " " + (text || "items"));
@@ -127,7 +142,7 @@ this._status.textContent = text;
 
 }); // custom element
 
-//alert	 ("selectList.js loaded");
+alert	 ("selectList.js loaded");
 
 },{"../util/dom":2,"../util/keyboardNavigation":3}],2:[function(require,module,exports){
 "use strict";
@@ -235,6 +250,7 @@ type: "list", // list, tree, or menu
 embedded: false, // if embedded in another widget, will not maintain tabindex="0" on container or child element
 multiselect: false,
 applyAria: true,
+activedescendant: false,
 nodeSelector: "li",
 activeNodeSelector: "",
 groupSelector: "ul",
@@ -320,11 +336,13 @@ return false;
 function current (node, search) {
 if (node) {
 setFocusedNode (node, search);
-node.focus ();
-if (! options.multiselect) {
+if (! options.activedescendant) node.focus ();
+
+/*if (! options.multiselect) {
 setAttributes("aria-selected"); // removes the attribute completely
 node.setAttribute("aria-selected", "true");
 } // if
+*/
 return node;
 
 } else {
@@ -345,7 +363,11 @@ focusedNode : initialFocus();
 function setFocusedNode (node, search) {
 if (! node) return;
 focusedNode = node;
-if (! options.embedded) {
+
+if (options.embedded) {
+setAttributes ("id"); // remove all id attributes from nodes
+node.setAttribute ("id", options.activedescendant);
+} else {
 setAttributes ("tabindex", "-1");
 focusedNode.setAttribute ("tabindex", "0");
 } // if
@@ -357,7 +379,10 @@ focusedNode.setAttribute ("aria-selected", "true");
 } // if
 
 if (search && options.type === "tree") definePath (node);
+
+node.dispatchEvent(new CustomEvent("activedescendant", {composed: true, bubbles: true}));
 } // setFocusedNode
+
 
 function definePath (node) {
 var root = node.closest ("[role=tree]");
@@ -560,6 +585,6 @@ return result;
 return current;
 } // keyboardNavigation
 
-//alert ("keyboardNavigation.js loaded");
+alert ("keyboardNavigation.js loaded");
 
 },{"./dom.js":2}]},{},[1]);

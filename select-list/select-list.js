@@ -7,6 +7,7 @@ var template = document.querySelector("#select-list-template");
 customElements.define ("select-list", class extends HTMLElement {
 constructor () {
 super ();
+this._root = this.createRootElement();
 } // constructor
 
 connectedCallback () {
@@ -16,16 +17,17 @@ this.render();
 
 init () {
 this.initOptions();
+alert ("select-list activedescendant: " + this._options.activedescendant);
 
-this._root = this.createRootElement();
 this._control = this._root.querySelector(".select-list");
 this._label = this._root.querySelector("#label");
 this._list = this._root.querySelector(".listbox");
 this._status = this._root.querySelector(".status");
 
 if (this._options.label) {
+this._label.setAttribute ("id", idGen("select-list-label-"));
 this._label.textContent = this._options.label;
-this._control.setAttribute ("aria-labelledby", "label");
+this._control.setAttribute ("aria-labelledby", this._label.getAttribute("id"));
 } // if
 
 } // init
@@ -34,6 +36,7 @@ initOptions () {
 this._options = {
 multiselect: this.hasAttribute("multiselect"),
 embedded: this.hasAttribute("embedded"),
+activedescendant: this.getAttribute("activedescendant") || "",
 label: this.getAttribute("label") || ""
 }; // this._options
 } // initOptions
@@ -58,6 +61,7 @@ var self = this;
 this.currentItem = keyboardNavigation(this._list, {
 multiselect: this._options.multiselect,
 embedded: this._options.embedded,
+activedescendant: this._options.activedescendant,
 activeNodeSelector: ":not([hidden])",
 
 actions: {
@@ -115,6 +119,17 @@ return (node.hasAttribute("value"))?
 node.getAttribute("value") : node.textContent;
 } // valueOf
 
+static get observedAttributes() {
+return ["activedescendant"];
+}
+
+attributeChangedCallback (name, oldValue, newValue) {
+this._options[name] = newValue;
+alert ("attributeChanged: " + name + "=" + newValue);
+
+if (name === "activedescendant") this.currentItem (this.currentItem());
+} // attributeChangedCallback
+
 
 displayItemCount (text) {
 this.statusMessage (this.querySelectorAll("[role=option]").length + " " + (text || "items"));
@@ -126,4 +141,4 @@ this._status.textContent = text;
 
 }); // custom element
 
-//alert	 ("selectList.js loaded");
+alert	 ("selectList.js loaded");

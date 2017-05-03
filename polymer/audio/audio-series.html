@@ -1,0 +1,26 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="audio-series">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-series">
+</div>
+
+</template>
+
+<script>
+class AudioSeries extends Polymer.Element {
+static get is() { return "audio-series"; }
+
+} // class AudioSeries
+
+window.customElements.define(AudioSeries.is, AudioSeries);
+</script>
+</dom-module>

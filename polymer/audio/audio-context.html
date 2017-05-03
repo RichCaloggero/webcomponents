@@ -1,0 +1,37 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+
+<script>
+"use strict";
+class _AudioContext_ extends Polymer.Element {
+static get is() { return "audio-context"; }
+
+static get properties() {
+return {
+name: {
+type: String,
+value: ""
+} // name
+}; // return
+} // get properties
+
+constructor () {
+super ();
+if (! window.AudioContext) {
+alert ("webaudio not available");
+return;
+} // if
+
+if (window.audio) {
+alert ("only one audio context per document");
+} else {
+window.audio = new AudioContext();
+} // if
+
+this.audio = window.audio;
+} // constructor
+
+
+} // class _AudioContext_
+
+window.customElements.define(_AudioContext_.is, _AudioContext_);
+</script>

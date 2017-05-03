@@ -1,0 +1,58 @@
+<dom-module id="audio-player">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-player">
+<h2>Audio Player</h2>
+<label>URL: <input type="text" value="{{src::change}}"></label>
+<audio tabindex="0" aria-label="Player Controls" controls src="{{src}}">
+</audio>
+</div>
+
+</template>
+
+<script>
+"use strict";
+
+class AudioPlayer extends _AudioContext_ {
+static get is() { return "audio-player"; }
+
+static get properties() {
+return {
+src: {
+type: String,
+value: "",
+notify: true,
+observer: "srcChanged"
+} // src
+}; // return
+} // get properties
+
+constructor () {
+var parentName;
+super ();
+parentName = this.parentNode.localName;
+if (parentName !== "audio-series" && parentName !== "audio-parallel") {
+alert ("audio-player must be child of audio-series or audio-parallel");
+throw ("audio graph errror");
+} // if
+
+} // constructor
+
+connectedCallback  () {
+super.connectedCallback();
+this.audioNode = audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
+} // connectedCallback
+
+srcChanged (_src) {
+} // srcChanged
+
+} // class AudioPlayer
+
+window.customElements.define(AudioPlayer.is, AudioPlayer);
+</script>
+</dom-module>

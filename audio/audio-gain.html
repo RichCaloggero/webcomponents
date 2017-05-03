@@ -35,12 +35,12 @@ observer: "gainChanged"
 
 constructor () {
 super ();
+this.audioNode = audio.createGain();
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck(AudioGain.is)) {
-this.audioNode = audio.createGain();
 //this.gainChanged (AudioGain.properties.gain.value);
 alert (this.audioNode);
 } // if

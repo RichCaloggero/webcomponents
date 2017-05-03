@@ -1,0 +1,57 @@
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="audio-gain">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-gain">
+<label>Gain: <input class="gain" value="{{gain::change}}" type="range" min="0.0" max="1.0" step="0.1"></label>
+</div>
+
+</template>
+
+<script>
+"use strict";
+
+class AudioGain extends _AudioContext_ {
+static get is() { return "audio-gain"; }
+
+static get properties () {
+return {
+gain: {
+type: Number,
+value: 1.0,
+notify: true,
+observer: "gainChanged"
+} // gain
+}; // return
+} // get properties
+
+
+constructor () {
+super ();
+} // constructor
+
+connectedCallback () {
+super.connectedCallback ();
+if (this.contextCheck(AudioGain.is)) {
+this.audioNode = audio.createGain();
+//this.gainChanged (AudioGain.properties.gain.value);
+alert (this.audioNode);
+} // if
+} // connectedCallback
+
+gainChanged (value) {
+this.audioNode.gain.value = value;
+} // gainChanged
+
+} // class AudioGain
+
+window.customElements.define(AudioGain.is, AudioGain);
+</script>
+</dom-module>

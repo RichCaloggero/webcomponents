@@ -1,0 +1,59 @@
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="audio-filter">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-filter">
+<label>Type: <select class="type" size="1">
+<option value="allpass">all pass</option>
+<option value="lowpass">low pass</option>
+<option value="highpass">high pass</option>
+<option value="bandpass">band pass</option>
+<option value="lowshelf">low shelf</option>
+<option value="highshelf">high shelf</option>
+<option value="notch">notch</option>
+<option value="peaking">peaking</option>
+</select>
+
+<label>Frequency: <input class="frequency" type="range" min="20.0" max="20000.0" step="10.0"></label>
+<label>Detune: <input class="detune" type="range" min="0.0" max="1.0" step="0.01"></label>
+<label>Q: <input class="q" type="range" min="0.01" max="20.0" step="0.05"></label>
+<label>Gain: <input class="gain" type="range" min="0.0" max="1.0" step="0.1"></label>
+</div>
+
+</template>
+
+<script>
+"use strict";
+
+class AudioFilter extends _AudioContext_ {
+static get is() { return "audio-filter"; }
+
+constructor () {
+super ();
+} // constructor
+
+connectedCallback () {
+this.audioNode = audio.createBiquadFilter ();
+alert (this.audioNode);
+} // connectedCallback
+
+connectAll (nodes) {
+//alert (`connecting all ${nodes.length} nodes`);
+
+for (var i=0; i<nodes.length-1; i++) {
+nodes[i].audioNode.connect (nodes[i+1].audioNode);
+} // for
+} // connectAll
+
+} // class AudioFilter
+
+window.customElements.define(AudioFilter.is, AudioFilter);
+</script>
+</dom-module>

@@ -26,12 +26,12 @@ return {
 
 constructor () {
 super ();
+this.audioNode = audio.destination;
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck (AudioDestination.is)) {
-this.audioNode = audio.destination;
 } // if
 } // connectedCallback
 

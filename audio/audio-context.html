@@ -42,6 +42,22 @@ return false;
 return true;
 } // contextCheck
 
+whenAllChildrenLoaded (loadedCallback) {
+var children = Array.from(this.childNodes).filter ((node) => node.nodeType === 1);
+var loaded = children.map ((element) => {
+//alert ("element: " + element);
+return customElements.whenDefined (element.localName);
+});
+
+Promise.all (loaded).then (() => {
+//alert (`all ${loaded.length} elements loaded`);
+loadedCallback.call (this, children);
+}).catch (function (error) {
+alert (error);
+throw error;
+});
+} // whenAllChildrenLoaded
+
 
 } // class _AudioContext_
 

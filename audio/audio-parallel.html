@@ -27,26 +27,16 @@ this.out = null;
 } // constructor
 
 connectedCallback () {
-var children = Array.from(this.childNodes).filter ((node) => node.nodeType === 1);
-var loaded = children.map ((element) => {
-//alert ("element: " + element);
-customElements.whenDefined (element.localName)
-});
-
-Promise.all (loaded).then (() => {
-//alert (`all ${loaded.length} elements loaded`);
-this.connectAll (children);
-}).catch (function (error) {
-alert (error);
-throw error;
-});
+this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-//alert (`connecting all ${nodes.length} nodes`);
+alert (`connecting all ${nodes.length} nodes`);
 
-for (var i=0; i<nodes.length-1; i++) {
-nodes[i].audioNode.connect (nodes[i+1].audioNode);
+for (var i=0; i<nodes.length; i++) {
+let e = nodes[i], n = e.audioNode;
+this.in.connect (n);
+n.connect (this.out);
 } // for
 } // connectAll
 

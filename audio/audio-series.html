@@ -27,19 +27,7 @@ this.out = null;
 } // constructor
 
 connectedCallback () {
-var children = Array.from(this.childNodes).filter ((node) => node.nodeType === 1);
-var loaded = children.map ((element) => {
-//alert ("element: " + element);
-return customElements.whenDefined (element.localName);
-});
-
-Promise.all (loaded).then (() => {
-//alert (`all ${loaded.length} elements loaded`);
-this.connectAll (children);
-}).catch (function (error) {
-alert (error);
-throw error;
-});
+this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
@@ -48,14 +36,10 @@ alert (`connecting all ${nodes.length} nodes`);
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1], n1 = e1.audioNode, n2 = e2.audioNode;
 alert (`connecting ${n1} to ${n2}`);
-if (n1.nodeType) {
-if (n1 instanceof AudioParallel) n1 = n1.in;
-else if (n1 instanceof AudioSeries) n1 = n1.audioNode;
-} // if
 
-if (n2.nodeType) {
+if (typeof(AudioParallel) !== "undefined") {
+if (n1 instanceof AudioParallel) n1 = n1.in;
 if (n2 instanceof AudioParallel) n2 = n2.in;
-else if (n2 instanceof AudioSeries) n2 = n2.audioNode;
 } // if
 
 n1.connect (n2);

@@ -30,7 +30,7 @@ connectedCallback () {
 var children = Array.from(this.childNodes).filter ((node) => node.nodeType === 1);
 var loaded = children.map ((element) => {
 //alert ("element: " + element);
-customElements.whenDefined (element.localName);
+return customElements.whenDefined (element.localName);
 });
 
 Promise.all (loaded).then (() => {
@@ -47,7 +47,7 @@ alert (`connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1], n1 = e1.audioNode, n2 = e2.audioNode;
-alert (`connecting ${e1.is}:${n1} to ${e2.is}:${n2}`);
+alert (`connecting ${n1} to ${n2}`);
 n1.connect (n2);
 } // for
 } // connectAll

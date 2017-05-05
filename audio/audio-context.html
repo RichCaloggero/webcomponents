@@ -16,6 +16,9 @@ value: ""
 
 constructor () {
 super ();
+// debugging
+this._debug = false;
+
 if (! window.AudioContext) {
 alert ("webaudio not available");
 return;
@@ -28,6 +31,8 @@ window.audio = new AudioContext();
 } // if
 
 this.audio = window.audio;
+
+
 } // constructor
 
 contextCheck (name) {

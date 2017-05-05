@@ -9,7 +9,8 @@ display: block;
 }
 </style>
 
-<div class="audio-gain">
+<div class="audio-gain" role="region">
+<span class="label">[[label]]</span>
 <label>Gain: <input class="gain" value="{{gain::change}}" type="range" min="0.0" max="1.0" step="0.1"></label>
 </div>
 
@@ -18,11 +19,18 @@ display: block;
 <script>
 "use strict";
 
+(function () {
+var instanceCount  = 0;
+
 class AudioGain extends _AudioContext_ {
 static get is() { return "audio-gain"; }
 
 static get properties () {
 return {
+label: {
+type: String,
+value: "gain"
+}, // label
 gain: {
 type: Number,
 value: 1.0,
@@ -35,13 +43,17 @@ observer: "gainChanged"
 
 constructor () {
 super ();
+instanceCount += 1;
+this._id = `${AudioGain.is + instanceCount}`;
+this.audioNode = audio.createGain();
+if (this._debug) alert (`created ${this.audioNode}`);
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
-this.audioNode = audio.createGain();
-alert (`created ${this.audioNode}`);
 if (this.contextCheck(AudioGain.is)) {
+this.shadowRoot.querySelector(".audio-gain").setAttribute ("aria-labelledby", this._id);
+this.shadowRoot.querySelector(".label").setAttribute ("id", this._id);
 //this.gainChanged (AudioGain.properties.gain.value);
 } // if
 } // connectedCallback
@@ -53,5 +65,6 @@ if (this.audioNode) this.audioNode.gain.value = value;
 } // class AudioGain
 
 window.customElements.define(AudioGain.is, AudioGain);
+})();
 </script>
 </dom-module>

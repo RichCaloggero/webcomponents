@@ -38,9 +38,9 @@ super ();
 
 connectedCallback  () {
 super.connectedCallback();
-this.audioNode = audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
-alert (`created ${this.audioNode}`);
 if (this.contextCheck(AudioPlayer.is)) {
+this.audioNode = audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
+if (this._debug) alert (`created ${this.audioNode}`);
 } // if
 } // connectedCallback
 

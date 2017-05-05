@@ -1,4 +1,3 @@
-<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
 <!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
 
 <dom-module id="audio-filter">
@@ -9,7 +8,9 @@ display: block;
 }
 </style>
 
-<div class="audio-filter">
+<div class="audio-filter" role="region">
+<span class="label">[[label]]</span>
+
 <label>Type: <select class="type" size="1" value="{{type::change}}">
 <option value="allpass">all pass</option>
 <option value="lowpass">low pass</option>
@@ -24,7 +25,7 @@ display: block;
 <label>Frequency: <input class="frequency" value="{{frequency::change}}" type="range" min="20.0" max="20000.0" step="10.0"></label>
 <label>Detune: <input class="detune" value="{{detune::change}}" type="range" min="0.0" max="1.0" step="0.01"></label>
 <label>Q: <input class="q" value="{{q::change}}" type="range" min="0.01" max="20.0" step="0.05"></label>
-<label>Gain: <input class="gain" value="{{gain::change}}" type="range" min="0.0" max="1.0" step="0.1"></label>
+<label>Gain: <input class="gain" value="{{gain::change}}" type="range" min="-30.0" max="30.0" step="0.1"></label>
 </div>
 
 </template>
@@ -32,12 +33,21 @@ display: block;
 <script>
 "use strict";
 
+(function () {
+var instanceCount = 0;
+
+
 class AudioFilter extends _AudioContext_ {
 static get is() { return "audio-filter"; }
 
 static get properties () {
 return {
-type: {
+label: {
+type: String,
+value: "filter"
+}, // label
+
+ type: {
 type: String,
 value: "lowpass",
 notify: true,
@@ -72,37 +82,49 @@ observer: "gainChanged"
 
 constructor () {
 super ();
+instanceCount += 1;
+this.audioNode = audio.createBiquadFilter ();
+this._id = `${AudioFilter.is + instanceCount}`;
+if (this._debug) alert ("created " + this.audioNode);
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
-this.audioNode = audio.createBiquadFilter ();
-alert ("created " + this.audioNode);
+if (this.contextCheck(AudioFilter.is)) {
+this.shadowRoot.querySelector(".audio-filter").setAttribute ("aria-labelledby", this._id);
+this.shadowRoot.querySelector(".label").setAttribute ("id", this._id);
+} // if
 } // connectedCallback
 
 
 typeChanged (value) {
-if (this.audioNode) this.audioNode.type = value;
+//if (this.audioNode)
+ this.audioNode.type = value;
 } // typeChanged
 
 gainChanged (value) {
-if (this.audioNode) this.audioNode.gain.value = value;
+//if (this.audioNode)
+ this.audioNode.gain.value = value;
 } // gainChanged
 
 qChanged (value) {
-if (this.audioNode) this.audioNode.Q.value = value;
+//if (this.audioNode)
+ this.audioNode.Q.value = value;
 } // qChanged
 
 frequencyChanged (value) {
-if (this.audioNode) this.audioNode.frequency.value = value;
+//if (this.audioNode)
+ this.audioNode.frequency.value = value;
 } // frequencyChanged
 
 detuneChanged (value) {
-if (this.audioNode) this.audioNode.detune.value = value;
+//if (this.audioNode)
+ this.audioNode.detune.value = value;
 } // detuneChanged
 
 } // class AudioFilter
 
 window.customElements.define(AudioFilter.is, AudioFilter);
+})();
 </script>
 </dom-module>

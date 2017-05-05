@@ -11,7 +11,7 @@ display: block;
 </style>
 
 <div class="audio-destination" role="region" aria-label="Audio Destination">
-<h2>Speakers</h2>
+<span>Speakers</span>
 </div>
 
 </template>
@@ -26,12 +26,12 @@ return {
 
 constructor () {
 super ();
+this.audioNode = audio.destination;
+if (this._debug) alert (`created ${this.audioNode}`);
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
-this.audioNode = audio.destination;
-alert (`created ${this.audioNode}`);
 if (this.contextCheck (AudioDestination.is)) {
 } // if
 } // connectedCallback

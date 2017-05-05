@@ -31,11 +31,11 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-alert (`connecting all ${nodes.length} nodes`);
+if (this._debug) alert (`connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1], n1 = e1.audioNode, n2 = e2.audioNode;
-alert (`connecting ${n1} to ${n2}`);
+if (this._debug) alert (`connecting ${n1} to ${n2}`);
 
 if (typeof(AudioParallel) !== "undefined") {
 if (n1 instanceof AudioParallel) n1 = n1.in;

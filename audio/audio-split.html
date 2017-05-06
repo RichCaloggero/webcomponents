@@ -22,9 +22,9 @@ static get is() { return "audio-split"; }
 
 constructor () {
 super ();
-this.audioNode = audio.createChannelSplitter (2);
-this.merge = audio.createChannelMerger (2);
-if (this._debug) alert (`created ${this.audioNode}`);
+this._in = audio.createChannelSplitter (2);
+this._out = audio.createChannelMerger (2);
+if (this._debug) alert (`created ${this._in}`);
 } // constructor
 
 connectedCallback () {
@@ -32,38 +32,32 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-var channel1, channel2;
+var channels = [this.firstElementChild, this.lastElementChild];
+
 if (this._debug) alert (`split: connecting all ${nodes.length} nodes`);
 if (nodes.length !== 2) {
 alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
 return;
 } // if
 
-channel1 = this.firstElementChild;
-channel2 = this.lastElementChild;
+for (var i in channels) {
+let channel = channels[i];
 
 if (typeof AudioSeries !== "undefined") {
-if (channel1 instanceof AudioSeries) {
-let _first = channel1.firstElementChild.audioNode;
-let _last = channel1.lastElementChild.audioNode;
-if (this._debug) alert (`split (channel1): connecting ${this.audioNode} to ${_first} and ${_last} to ${this.merge}`);
-this.audioNode.connect (_first, 0);
-_last.connect (this.merge, 0, 0);
-} // if
-
-if (channel2 instanceof AudioSeries) {
-let _first = channel2.firstElementChild.audioNode;
-let _last = channel2.lastElementChild.audioNode;
-if (this._debug) alert (`split (channel2): connecting ${this.audioNode} to ${_first} and ${_last} to ${this.merge}`);
-this.audioNode.connect (_first, 1);
-_last.connect (this.merge, 0, 1);
+if (channel instanceof AudioSeries) {
+let _first = channel.firstElementChild.audioNode || channel.firstElementChild._in;
+let _last = channel.lastElementChild.audioNode || channel.lastElementChild._out;
+if (this._debug) alert (`split (channel ${Number(i)+1}): connecting ${this._in} to ${_first} and ${_last} to ${this._out}`);
+this._in.connect (_first, 0);
+_last.connect (this._out, 0, i);
 } // if
 } // if series
-
-// hack -- need to have in and out on series and parallel nodes
+} // for
+/*// hack -- need to have in and out on series and parallel nodes
 alert (`split: connecting ${this.merge} to ${this.nextElementSibling.audioNode}`);
 this.merge.connect (this.nextElementSibling.audioNode);
 this.audioNode.disconnect (this.nextElementSibling.audioNode);
+*/
 
 } // connectAll
 

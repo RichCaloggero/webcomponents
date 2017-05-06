@@ -11,7 +11,9 @@ display: block;
 <div class="audio-filter" role="region">
 <span class="label">[[label]]</span>
 
-<label>Type: <select class="type" size="1" value="{{type::change}}">
+<div class="field" data-name="type">
+<label>Type:</label>
+ <br><select class="type" size="1" value="{{type::change}}">
 <option value="allpass">all pass</option>
 <option value="lowpass">low pass</option>
 <option value="highpass">high pass</option>
@@ -20,12 +22,27 @@ display: block;
 <option value="highshelf">high shelf</option>
 <option value="notch">notch</option>
 <option value="peaking">peaking</option>
-</select></label>
+</select></div>
 
-<label>Frequency: <input class="frequency" value="{{frequency::change}}" type="range" min="20.0" max="20000.0" step="10.0"></label>
-<label>Detune: <input class="detune" value="{{detune::change}}" type="range" min="0.0" max="1.0" step="0.01"></label>
-<label>Q: <input class="q" value="{{q::change}}" type="range" min="0.01" max="20.0" step="0.05"></label>
-<label>Gain: <input class="gain" value="{{gain::change}}" type="range" min="-30.0" max="30.0" step="0.1"></label>
+<div class="field" data-name="frequency">
+<label>Frequency</label>
+<br><input class="frequency" value="{{frequency::change}}" type="number" min="20.0" max="20000.0" step="10.0"></label>
+</div>
+
+<div class="field" data-name="detune">
+<label>Detune</label>
+<br><input class="detune" value="{{detune::change}}" type="number" min="0.0" max="1.0" step="0.01"></label>
+</div>
+
+<div class="field" data-name="q">
+<label>Q</label>
+<br><input class="q" value="{{q::change}}" type="number" min="0.01" max="20.0" step="0.05"></label>
+</div>
+
+<div class="field" data-name="gain">
+<label>Gain</label>
+<br><input class="gain" value="{{gain::change}}" type="number" min="-30.0" max="30.0" step="0.1"></label>
+</div>
 </div>
 
 </template>
@@ -93,6 +110,7 @@ super.connectedCallback ();
 if (this.contextCheck(AudioFilter.is)) {
 this.shadowRoot.querySelector(".audio-filter").setAttribute ("aria-labelledby", this._id);
 this.shadowRoot.querySelector(".label").setAttribute ("id", this._id);
+this.addFieldLabels ();
 } // if
 } // connectedCallback
 
@@ -121,6 +139,20 @@ detuneChanged (value) {
 //if (this.audioNode)
  this.audioNode.detune.value = value;
 } // detuneChanged
+
+addFieldLabels () {
+Array.from(this.shadowRoot.querySelectorAll (".field"))
+.forEach ((field) => {
+var name, control, label, id;
+name = field.getAttribute("data-name");
+label = field.querySelector("label");
+control = field.querySelector("input, select, textarea, button");
+id = this._id + "-" + name;
+//alert (`field: ${name} ${field} ${control} ${label}`);
+  control.setAttribute("id", id);
+label.setAttribute ("for", id);
+});
+} // addFieldLabels
 
 } // class AudioFilter
 

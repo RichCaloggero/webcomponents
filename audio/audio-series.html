@@ -22,8 +22,6 @@ static get is() { return "audio-series"; }
 
 constructor () {
 super ();
-this.in = null;
-this.out = null;
 } // constructor
 
 connectedCallback () {
@@ -37,13 +35,13 @@ if (this._debug) alert (`series: connecting all ${nodes.length} nodes`);
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1];
 let n1 = e1._out|| e1.audioNode;
-let n2 = e2._out|| e2.audioNode;
+let n2 = e2._in || e2.audioNode;
 
 if (this._debug) alert (`series: connecting ${n1} to ${n2}`);
 
 if (typeof(AudioParallel) !== "undefined") {
-if (n1 instanceof AudioParallel) n1 = n1.in;
-if (n2 instanceof AudioParallel) n2 = n2.in;
+if (n1 instanceof AudioParallel) n1 = n1._in;
+if (n2 instanceof AudioParallel) n2 = n2._in;
 } // if
 
 n1.connect (n2);

@@ -1,0 +1,74 @@
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="audio-split">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-split">
+</div>
+
+</template>
+
+<script>
+"use strict";
+
+class AudioSplit extends _AudioContext_ {
+static get is() { return "audio-split"; }
+
+constructor () {
+super ();
+this.audioNode = audio.createChannelSplitter (2);
+this.merge = audio.createChannelMerger (2);
+if (this._debug) alert (`created ${this.audioNode}`);
+} // constructor
+
+connectedCallback () {
+this.whenAllChildrenLoaded (this.connectAll);
+} // connectedCallback
+
+connectAll (nodes) {
+var channel1, channel2;
+if (this._debug) alert (`split: connecting all ${nodes.length} nodes`);
+if (nodes.length !== 2) {
+alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
+return;
+} // if
+
+channel1 = this.firstElementChild;
+channel2 = this.lastElementChild;
+
+if (typeof AudioSeries !== "undefined") {
+if (channel1 instanceof AudioSeries) {
+let _first = channel1.firstElementChild.audioNode;
+let _last = channel1.lastElementChild.audioNode;
+if (this._debug) alert (`split (channel1): connecting ${this.audioNode} to ${_first} and ${_last} to ${this.merge}`);
+this.audioNode.connect (_first, 0);
+_last.connect (this.merge, 0, 0);
+} // if
+
+if (channel2 instanceof AudioSeries) {
+let _first = channel2.firstElementChild.audioNode;
+let _last = channel2.lastElementChild.audioNode;
+if (this._debug) alert (`split (channel2): connecting ${this.audioNode} to ${_first} and ${_last} to ${this.merge}`);
+this.audioNode.connect (_first, 1);
+_last.connect (this.merge, 0, 1);
+} // if
+} // if series
+
+// hack -- need to have in and out on series and parallel nodes
+alert (`split: connecting ${this.merge} to ${this.nextElementSibling.audioNode}`);
+this.merge.connect (this.nextElementSibling.audioNode);
+this.audioNode.disconnect (this.nextElementSibling.audioNode);
+
+} // connectAll
+
+} // class AudioSplit
+
+window.customElements.define(AudioSplit.is, AudioSplit);
+</script>
+</dom-module>

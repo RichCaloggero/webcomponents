@@ -1,5 +1,11 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 
+<template>
+<div class="audio-context" name="{{name}}" _debug="{{_debug}}">
+<h1>{{name}}</h1>
+</div>
+</template>
+
 <script>
 "use strict";
 class _AudioContext_ extends Polymer.Element {
@@ -7,6 +13,11 @@ static get is() { return "audio-context"; }
 
 static get properties() {
 return {
+_debug: {
+type: Boolean,
+value: true,
+observer: "_debugChanged"
+}, // _debug
 name: {
 type: String,
 value: ""
@@ -16,8 +27,6 @@ value: ""
 
 constructor () {
 super ();
-// debugging
-this._debug = false;
 
 if (! window.AudioContext) {
 alert ("webaudio not available");
@@ -63,6 +72,9 @@ throw error;
 });
 } // whenAllChildrenLoaded
 
+_debugChanged (value) {
+this._debug = value;
+} // _debugChanged
 
 } // class _AudioContext_
 

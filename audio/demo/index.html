@@ -10,6 +10,8 @@
 
 <link rel="import" href="../audio-context.html">
 <link rel="import" href="../audio-series.html">
+<link rel="import" href="../audio-split.html">
+
 <link rel="import" href="../audio-player.html">
 <link rel="import" href="../audio-destination.html">
 <link rel="import" href="../audio-gain.html">
@@ -24,7 +26,10 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<audio-filter></audio-filter>
+<audio-split>
+<audio-series><audio-filter></audio-filter></audio-series>
+<audio-series><audio-gain></audio-gain></audio-series>
+</audio-split>
 
 <audio-gain label="output"></audio-gain>
 

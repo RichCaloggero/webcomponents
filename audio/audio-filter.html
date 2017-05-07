@@ -8,7 +8,7 @@ display: block;
 }
 </style>
 
-<div class="audio-filter" role="region">
+<div class="audio-filter" role="region" aria-label$="{{label}}">
 <span class="label">[[label]]</span>
 
 <div class="field" data-name="bypass">
@@ -123,8 +123,6 @@ if (this._debug) alert ("created " + this.audioNode);
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck(AudioFilter.is)) {
-this.shadowRoot.querySelector(".audio-filter").setAttribute ("aria-labelledby", this._id);
-this.shadowRoot.querySelector(".label").setAttribute ("id", this._id);
 this.addFieldLabels ();
 } // if
 } // connectedCallback

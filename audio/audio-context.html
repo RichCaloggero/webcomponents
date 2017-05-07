@@ -121,7 +121,7 @@ Array.from(this.shadowRoot.querySelectorAll (".field"))
 var name, control, label, id;
 name = field.getAttribute("data-name");
 label = field.querySelector("label");
-control = field.querySelector("input, select, textarea, button");
+control = field.querySelector("input, select, textarea");
 id = this._id + "-" + name;
 //alert (`field: ${name} ${field} ${control} ${label}`);
   control.setAttribute("id", id);

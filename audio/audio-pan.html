@@ -1,0 +1,112 @@
+<!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
+<!--<link rel="import" href="../polymer/lib/elements/dom-repeat.html">-->
+
+<dom-module id="audio-pann">
+<template>
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-pann" role="region" aria-label$="{{label}}">
+<span class="label">[[label]]</span>
+<div class="field" data-name="x">
+<label>x</label>
+<br><input class="x" value="{{x::change}}" type="number" min="-10.0" max="10.0" step="0.1">
+</div>
+
+<div class="field" data-name="y">
+<label>y</label>
+<br><input class="y" value="{{y::change}}" type="number" min="-10.0" max="10.0" step="0.1">
+</div>
+
+<div class="field" data-name="z">
+<label>z</label>
+<br><input class="z" value="{{z::change}}" type="number" min="-10.0" max="10.0" step="0.1">
+</div>
+</template>
+
+<script>
+"use strict";
+
+(function () {
+var instanceCount  = 0;
+
+class AudioPan extends _AudioContext_ {
+static get is() { return "audio-pann"; }
+
+static get properties () {
+return {
+label: {
+type: String,
+value: "3D pan"
+}, // label
+x: {
+type: Number,
+value: 0.0,
+notify: true,
+observer: "xChanged"
+}, // x
+
+y: {
+type: Number,
+value: 0.0,
+notify: true,
+observer: "yChanged"
+}, // y
+
+z: {
+type: Number,
+value: 0.0,
+notify: true,
+observer: "zChanged"
+} // zx
+}; // return
+} // get properties
+
+
+constructor () {
+super ();
+instanceCount += 1;
+this._id = `${AudioPan.is + instanceCount}`;
+this.audioNode = audio.createPanner ();
+this._in = audio.createGain();
+this._out = audio.createGain();
+
+this.audioNode.panningModel = "HRTF";
+this.audioNode.distanceModel = "inverse";
+this.audioNode.maxDistance = 10.0;
+this.audioNode.coneInnerAngle = 0.0;
+this.audioNode.coneOuterAngle = 360.0;
+this.audioNode.coneOuterGain = 0.0;
+
+this.connect ();
+if (this._debug) alert (`created ${this.audioNode}`);
+} // constructor
+
+connectedCallback () {
+super.connectedCallback ();
+if (this.contextCheck(AudioPan.is)) {
+this.addFieldLabels ();
+} // if
+} // connectedCallback
+
+xChanged (value) {
+this.audioNode.positionX.value = value;
+} // xChanged
+
+yChanged (value) {
+this.audioNode.positionY.value = value;
+} // yChanged
+
+zChanged (value) {
+this.audioNode.positionZ.value = value;
+} // zChanged
+
+} // class AudioPan
+
+window.customElements.define(AudioPan.is, AudioPan);
+})();
+</script>
+</dom-module>

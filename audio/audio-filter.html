@@ -77,19 +77,19 @@ value: "filter"
 
  type: {
 type: String,
-value: "lowpass",
+value: "allpass",
 notify: true,
 observer: "typeChanged"
 }, //type
 frequency: {
 type: Number,
-value: 1000.0,
+value: 400.0,
 notify: true,
 observer: "frequencyChanged"
 }, // frequency
 q: {
 type: Number,
-value: 1.0,
+value: 0.76,
 notify: true,
 observer: "qChanged"
 }, // q

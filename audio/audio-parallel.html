@@ -10,6 +10,7 @@ display: block;
 </style>
 
 <div class="audio-parallel">
+<slot></slot>
 </div>
 
 </template>
@@ -22,21 +23,27 @@ static get is() { return "audio-parallel"; }
 
 constructor () {
 super ();
-this.in = null;
-this.out = null;
+this._in = audio.createGain();
+this._out = audio.createGain();
 } // constructor
 
 connectedCallback () {
+super.connectedCallback ();
 this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-alert (`connecting all ${nodes.length} nodes`);
+if (this._debugConnection) alert (`parallel: connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length; i++) {
-let e = nodes[i], n = e.audioNode;
-this.in.connect (n);
-n.connect (this.out);
+let e = nodes[i];
+let _in = (e._in || e.audioNode || e.firstElementChild._in || e.firstElementChild.audioNode);
+let _out = (e._out || e.audioNode || e.firstElementChild._out || e.firstElementChild.audioNode);
+
+//if (this._debugConnection)
+alert (`parallel: connecting ${this._in} to ${_in} and ${_out} to ${this._out}`);
+this._in.connect (_in);
+_out.connect (this._out);
 } // for
 } // connectAll
 

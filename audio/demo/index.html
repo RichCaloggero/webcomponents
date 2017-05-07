@@ -11,6 +11,7 @@
 <link rel="import" href="../audio-context.html">
 <link rel="import" href="../audio-series.html">
 <link rel="import" href="../audio-split.html">
+<link rel="import" href="../audio-parallel.html">
 
 <link rel="import" href="../audio-player.html">
 <link rel="import" href="../audio-destination.html">
@@ -26,10 +27,13 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<audio-split>
-<audio-series><audio-filter></audio-filter></audio-series>
-<audio-series><audio-gain></audio-gain></audio-series>
+<audio-parallel>
+<audio-series><audio-gain label="dry" gain="0.75"></audio-gain></audio-series>
+<audio-split reverse>
+<audio-series><audio-filter label="wet channel 1" type="allpass" frequency="400"></audio-filter></audio-series>
+<audio-series><audio-filter label="wet channel2" type="allpass" frequency="400"></audio-filter></audio-series>
 </audio-split>
+</audio-parallel>
 
 <audio-gain label="output"></audio-gain>
 

@@ -39,11 +39,6 @@ let n2 = e2._in || e2.audioNode;
 
 if (this._debugConnection) alert (`series: connecting ${e1.audioNode === n1? e1.audioNode : n1} to ${n2 === e2.audioNode? e2.audioNode : n2}`);
 
-if (typeof(AudioParallel) !== "undefined") {
-if (n1 instanceof AudioParallel) n1 = n1._in;
-if (n2 instanceof AudioParallel) n2 = n2._in;
-} // if
-
 n1.connect (n2);
 } // for
 } // connectAll

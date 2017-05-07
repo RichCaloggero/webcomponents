@@ -1,26 +1,40 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 
+<dom-module id="audio-context">
 <template>
-<div class="audio-context" name="{{name}}" _debug="{{_debug}}">
+<style>
+:host {
+display: block;
+}
+</style>
+
+<div class="audio-context">
 <h1>{{name}}</h1>
+<slot></slot>
 </div>
 </template>
 
 <script>
 "use strict";
-class _AudioContext_ extends Polymer.Element {
+
+window._AudioContext_ = class _AudioContext_ extends Polymer.Element {
 static get is() { return "audio-context"; }
 
 static get properties() {
 return {
 _debug: {
 type: Boolean,
-value: true,
-observer: "_debugChanged"
+value: false,
+//observer: "_debugChanged"
 }, // _debug
+_debugConnection: {
+type: Boolean,
+value: false
+}, // _debugConnection
 name: {
 type: String,
-value: ""
+value: "",
+//observer: "nameChanged"
 } // name
 }; // return
 } // get properties
@@ -40,9 +54,38 @@ window.audio = new AudioContext();
 } // if
 
 this.audio = window.audio;
-
-
 } // constructor
+
+connectedCallback () {
+super.connectedCallback ();
+if (this._debug) alert (`debugging enabled in ${this.audioNode} context ${this.name}`);
+} // connectedCallback
+
+_bypass (value) {
+if (this._in && this._out  && this.audioNode) {
+//alert (`bypass ${value} on ${this.audioNode}, ${this._in}, ${this._out}`);
+if (value) {
+this.disconnect ();
+ this._in.connect (this._out);
+} else {
+this.disconnect ();
+this.connect ();
+} // if
+} // if
+} // _bypass
+
+connect () {
+//alert (`running internal connect on ${this.audioNode}`);
+this._in.connect (this.audioNode)
+.connect (this._out);
+} // connect
+
+disconnect () {
+//alert (`running internal disconnect on ${this.audioNode}`);
+this._in.disconnect();
+this.audioNode.disconnect();
+} // disconnect
+
 
 contextCheck (name) {
 var parentName = this.parentNode.localName;
@@ -72,11 +115,32 @@ throw error;
 });
 } // whenAllChildrenLoaded
 
-_debugChanged (value) {
+addFieldLabels () {
+Array.from(this.shadowRoot.querySelectorAll (".field"))
+.forEach ((field) => {
+var name, control, label, id;
+name = field.getAttribute("data-name");
+label = field.querySelector("label");
+control = field.querySelector("input, select, textarea, button");
+id = this._id + "-" + name;
+//alert (`field: ${name} ${field} ${control} ${label}`);
+  control.setAttribute("id", id);
+label.setAttribute ("for", id);
+});
+} // addFieldLabels
+
+/*_debugChanged (value) {
 this._debug = value;
 } // _debugChanged
+*/
+
+/*nameChanged (value) {
+this.name = value;
+} // nameChanged
+*/
 
 } // class _AudioContext_
 
 window.customElements.define(_AudioContext_.is, _AudioContext_);
 </script>
+</dom-module>

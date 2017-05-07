@@ -20,6 +20,12 @@ display: block;
 class AudioSplit extends _AudioContext_ {
 static get is() { return "audio-split"; }
 
+static get properties () {
+return {
+reverse: Boolean
+}; // return
+} // get properties
+
 constructor () {
 super ();
 this._in = audio.createChannelSplitter (2);
@@ -34,7 +40,7 @@ this.whenAllChildrenLoaded (this.connectAll);
 connectAll (nodes) {
 var channels = [this.firstElementChild, this.lastElementChild];
 
-if (this._debug) alert (`split: connecting all ${nodes.length} nodes`);
+if (this._debugConnection) alert (`split: connecting all ${nodes.length} nodes`);
 if (nodes.length !== 2) {
 alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
 return;
@@ -45,11 +51,15 @@ let channel = channels[i];
 
 if (typeof AudioSeries !== "undefined") {
 if (channel instanceof AudioSeries) {
-let _first = channel.firstElementChild.audioNode || channel.firstElementChild._in;
-let _last = channel.lastElementChild.audioNode || channel.lastElementChild._out;
-if (this._debug) alert (`split (channel ${Number(i)+1}): connecting ${this._in} to ${_first} and ${_last} to ${this._out}`);
+let _first = channel.firstElementChild._in || channel.firstElementChild.audioNode;
+let firstNode = _first === channel.firstElementChild.audioNode? _first : channel.firstElementChild._in;
+
+let _last = channel.lastElementChild._out || channel.lastElementChild.audioNode;
+let lastNode = _last === channel.lastElementChild.audioNode? _last : channel.lastElementChild._out;
+
+if (this._debugConnection) alert (`split (channel ${Number(i)+1}): connecting ${this._in} to ${firstNode} and ${lastNode} to ${this._out}`);
 this._in.connect (_first, 0);
-_last.connect (this._out, 0, i);
+_last.connect (this._out, 0, (this.reverse)? 1-i : i);
 } // if
 } // if series
 } // for

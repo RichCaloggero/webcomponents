@@ -11,6 +11,11 @@ display: block;
 <div class="audio-filter" role="region">
 <span class="label">[[label]]</span>
 
+<div class="field" data-name="bypass">
+<label>bypass</label>
+<br><input type="checkbox" checked="{{bypass::change}}">
+</div>
+
 <div class="field" data-name="type">
 <label>Type:</label>
  <br><select class="type" size="1" value="{{type::change}}">
@@ -59,6 +64,12 @@ static get is() { return "audio-filter"; }
 
 static get properties () {
 return {
+bypass: {
+type: Boolean,
+value: false,
+notify: true,
+observer: "_bypass"
+}, // bypass
 label: {
 type: String,
 value: "filter"
@@ -100,8 +111,12 @@ observer: "gainChanged"
 constructor () {
 super ();
 instanceCount += 1;
-this.audioNode = audio.createBiquadFilter ();
 this._id = `${AudioFilter.is + instanceCount}`;
+
+this.audioNode = audio.createBiquadFilter ();
+this._in = audio.createGain();
+this._out = audio.createGain();
+this.connect ();
 if (this._debug) alert ("created " + this.audioNode);
 } // constructor
 
@@ -140,19 +155,6 @@ detuneChanged (value) {
  this.audioNode.detune.value = value;
 } // detuneChanged
 
-addFieldLabels () {
-Array.from(this.shadowRoot.querySelectorAll (".field"))
-.forEach ((field) => {
-var name, control, label, id;
-name = field.getAttribute("data-name");
-label = field.querySelector("label");
-control = field.querySelector("input, select, textarea, button");
-id = this._id + "-" + name;
-//alert (`field: ${name} ${field} ${control} ${label}`);
-  control.setAttribute("id", id);
-label.setAttribute ("for", id);
-});
-} // addFieldLabels
 
 } // class AudioFilter
 

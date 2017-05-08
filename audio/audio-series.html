@@ -20,8 +20,20 @@ display: block;
 class AudioSeries extends _AudioContext_ {
 static get is() { return "audio-series"; }
 
+static get properties () {
+return {
+label: {
+type: String,
+value: "series",
+//observer: "labelChanged"
+} // label
+}; // return
+} // get properties
+
 constructor () {
 super ();
+this._in = audio.createGain ();
+this._out = audio.createGain ();
 } // constructor
 
 connectedCallback () {
@@ -30,18 +42,32 @@ this.whenAllChildrenLoaded (this.connectAll);
 
 connectAll (nodes) {
 if (nodes.length < 2) return;
-if (this._debugConnection) alert (`series: connecting all ${nodes.length} nodes`);
+if (this._debugConnection) alert (`${this.label}: connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1];
 let n1 = e1._out|| e1.audioNode;
 let n2 = e2._in || e2.audioNode;
 
-if (this._debugConnection) alert (`series: connecting ${e1.audioNode === n1? e1.audioNode : n1} to ${n2 === e2.audioNode? e2.audioNode : n2}`);
+if (this._debugConnection) alert (`${this.label}: connecting ${e1.label} to ${e2.label}`);
 
 n1.connect (n2);
 } // for
+
+this.connect ();
 } // connectAll
+
+connect () {
+let first = this.firstElementChild, last = this.lastElementChild;
+if (this.debugConnection) alert (`this.label: finalizing connection: ${first.label}, ${last.label}`);
+this._in.connect (first._in || first.audioNode);
+(last._in || last.audioNode).connect (this._out);
+} // connect
+
+
+labelChanged (value) {
+this.label = value;
+} // labelChanged
 
 } // class AudioSeries
 

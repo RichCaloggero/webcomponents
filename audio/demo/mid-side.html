@@ -9,12 +9,14 @@
 <script src="../bower_components/webcomponentsjs/webcomponents-loader.js"></script>
 
 <link rel="import" href="../audio-context.html">
+
+<!-- graph description elements -->
 <link rel="import" href="../audio-series.html">
 <link rel="import" href="../audio-parallel.html">
-
 <link rel="import" href="../audio-split.html">
 <link rel="import" href="../audio-merge.html">
 
+<!-- audio processing elements -->
 <link rel="import" href="../audio-player.html">
 <link rel="import" href="../audio-destination.html">
 <link rel="import" href="../audio-gain.html">
@@ -25,20 +27,22 @@
 <h1>audio component demo</h1>
 
 <audio-context name="mid-side">
-<audio-series>
+<audio-series label="top level">
 <audio-player src="music.mp3">
 </audio-player>
 
 <audio-parallel>
-<audio-series>
+<audio-series label="sum signal">
 <audio-merge></audio-merge>
-<audio-gain label="mid" gain="0.5"></audio-gain>
+<audio-gain  gain="0.5"></audio-gain>
 </audio-series>
 
+<audio-series label="difference signal">
 <audio-split>
-<audio-series><audio-gain label="wet left"></audio-gain></audio-series>
-<audio-series><audio-gain label="wet right" gain="-1"></audio-gain></audio-series>
+<audio-series label="channel 1"><audio-gain label="wet left"></audio-gain></audio-series>
+<audio-series label="channel2"><audio-gain label="wet right" gain="-1"></audio-gain></audio-series>
 </audio-split>
+</audio-series>
 </audio-parallel>
 
 <audio-gain label="output"></audio-gain>

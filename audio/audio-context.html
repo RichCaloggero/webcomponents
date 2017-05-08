@@ -1,5 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 
+
 <dom-module id="audio-context">
 <template>
 <style>
@@ -27,9 +28,10 @@ type: Boolean,
 value: false,
 //observer: "_debugChanged"
 }, // _debug
+
 _debugConnection: {
 type: Boolean,
-value: false
+value: true
 }, // _debugConnection
 name: {
 type: String,
@@ -124,7 +126,8 @@ label = field.querySelector("label");
 control = field.querySelector("input, select, textarea");
 id = this._id + "-" + name;
 //alert (`field: ${name} ${field} ${control} ${label}`);
-  control.setAttribute("id", id);
+control.setAttribute("id", id);
+control.setAttribute ("role", "application");
 label.setAttribute ("for", id);
 });
 } // addFieldLabels

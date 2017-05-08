@@ -17,12 +17,16 @@ display: block;
 
 <script>
 "use strict";
+var instanceCount = 0;
 
 class AudioParallel extends _AudioContext_ {
 static get is() { return "audio-parallel"; }
 
 constructor () {
 super ();
+instanceCount += 1;
+this.label = `audio-parallel-${instanceCount}`;
+
 this._in = audio.createGain();
 this._out = audio.createGain();
 } // constructor
@@ -33,15 +37,13 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-if (this._debugConnection) alert (`parallel: connecting all ${nodes.length} nodes`);
+if (this._debugConnection) alert (`${this.label}: connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length; i++) {
 let e = nodes[i];
 let _in = (e._in || e.audioNode || e.firstElementChild._in || e.firstElementChild.audioNode);
 let _out = (e._out || e.audioNode || e.firstElementChild._out || e.firstElementChild.audioNode);
 
-//if (this._debugConnection)
-alert (`parallel: connecting ${this._in} to ${_in} and ${_out} to ${this._out}`);
 this._in.connect (_in);
 _out.connect (this._out);
 } // for

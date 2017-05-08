@@ -28,6 +28,7 @@ reverse: Boolean
 
 constructor () {
 super ();
+this.label = "audio-split":
 this._in = audio.createChannelSplitter (2);
 this._out = audio.createChannelMerger (2);
 if (this._debug) alert (`created ${this._in}`);
@@ -52,14 +53,17 @@ let channel = channels[i];
 if (typeof AudioSeries !== "undefined") {
 if (channel instanceof AudioSeries) {
 let _first = channel.firstElementChild._in || channel.firstElementChild.audioNode;
-let firstNode = _first === channel.firstElementChild.audioNode? _first : channel.firstElementChild._in;
+let first = channel.firstElementNode.label || _first;
 
 let _last = channel.lastElementChild._out || channel.lastElementChild.audioNode;
-let lastNode = _last === channel.lastElementChild.audioNode? _last : channel.lastElementChild._out;
+let last = channel.lastElementNode.label || _last;
 
-if (this._debugConnection) alert (`split (channel ${Number(i)+1}): connecting ${this._in} to ${firstNode} and ${lastNode} to ${this._out}`);
+if (this._debugConnection) alert (`split (channel ${Number(i)+1}): connecting ${this._in} to ${first} and ${last} to ${this._out}`);
 this._in.connect (_first, 0);
 _last.connect (this._out, 0, (this.reverse)? 1-i : i);
+
+} else {
+alert ("split can only contain exactly 2 nodes, each of which must be an audio-series");
 } // if
 } // if series
 } // for

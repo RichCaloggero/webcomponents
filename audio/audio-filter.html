@@ -55,7 +55,7 @@ display: block;
 <script>
 "use strict";
 
-(function () {
+//(function () {
 var instanceCount = 0;
 
 
@@ -75,36 +75,41 @@ type: String,
 value: "filter"
 }, // label
 
- type: {
+type: {
 type: String,
 value: "allpass",
 notify: true,
 observer: "typeChanged"
 }, //type
+
 frequency: {
 type: Number,
 value: 400.0,
 notify: true,
 observer: "frequencyChanged"
 }, // frequency
+
 q: {
 type: Number,
 value: 0.76,
 notify: true,
 observer: "qChanged"
 }, // q
+
 detune: {
 type: Number,
 value: 0.0,
 notify: true,
 observer: "detuneChanged"
 }, // detune
+
 gain: {
 type: Number,
 value: 1.0,
 notify: true,
 observer: "gainChanged"
 } // gain
+
 }; // return
 } // get properties
 
@@ -117,7 +122,7 @@ this.audioNode = audio.createBiquadFilter ();
 this._in = audio.createGain();
 this._out = audio.createGain();
 this.connect ();
-if (this._debug) alert ("created " + this.audioNode);
+if (this._debug) alert (`${this.label}: created ${this.audioNode}`);
 } // constructor
 
 connectedCallback () {
@@ -157,6 +162,6 @@ detuneChanged (value) {
 } // class AudioFilter
 
 window.customElements.define(AudioFilter.is, AudioFilter);
-})();
+//})();
 </script>
 </dom-module>

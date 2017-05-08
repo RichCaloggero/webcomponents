@@ -11,8 +11,10 @@ display: block;
 
 <div class="audio-gain" role="region" aria-label$="{{label}}">
 <span class="label">[[label]]</span>
+<div class="field" data-name="gain">
 <label>Gain:</label>
 <br><input class="gain" value="{{gain::change}}" type="number" min="-2.0" max="2.0" step="0.1">
+</div>
 </div>
 
 </template>
@@ -47,7 +49,7 @@ super ();
 instanceCount += 1;
 this._id = `${AudioGain.is + instanceCount}`;
 this.audioNode = audio.createGain();
-if (this._debug) alert (`created ${this.audioNode}`);
+if (this._debug) alert (`${this.label}: created ${this.audioNode}`);
 } // constructor
 
 connectedCallback () {

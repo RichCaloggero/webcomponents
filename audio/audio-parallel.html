@@ -25,7 +25,8 @@ static get is() { return "audio-parallel"; }
 constructor () {
 super ();
 instanceCount += 1;
-this.label = `audio-parallel-${instanceCount}`;
+this._id = AudioParallel.is + instanceCount;
+this.label = this._id;
 
 this._in = audio.createGain();
 this._out = audio.createGain();
@@ -37,16 +38,16 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-if (this._debugConnection) alert (`${this.label}: connecting all ${nodes.length} nodes`);
+this.debugConnection (`${this.label}: connecting all ${nodes.length} nodes`);
 
 for (var i=0; i<nodes.length; i++) {
 let e = nodes[i];
-let _in = (e._in || e.audioNode || e.firstElementChild._in || e.firstElementChild.audioNode);
-let _out = (e._out || e.audioNode || e.firstElementChild._out || e.firstElementChild.audioNode);
-
-this._in.connect (_in);
-_out.connect (this._out);
+this.debugConnection (`${this.label}: connecting ${e.label} in parallel`);
+this._in.connect (e._in);
+e._out.connect (this._out);
 } // for
+
+this._out.gain.value = 1/nodes.length;
 } // connectAll
 
 } // class AudioParallel

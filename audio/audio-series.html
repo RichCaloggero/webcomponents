@@ -10,6 +10,7 @@ display: block;
 </style>
 
 <div class="audio-series">
+<slot></slot>
 </div>
 
 </template>
@@ -41,33 +42,29 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-if (nodes.length < 2) return;
-if (this._debugConnection) alert (`${this.label}: connecting all ${nodes.length} nodes`);
+if (nodes.length < 1) return;
+this.debugConnection (`${this.label}: connecting all ${nodes.length} nodes`);
+
+if (this.firstElementChild._in) {
+this.debugConnection (`${this.label}: connecting  series input to ${this.firstElementChild.label} ${this.firstElementChild._in}`);
+this._in.connect (this.firstElementChild._in);
+} // if
 
 for (var i=0; i<nodes.length-1; i++) {
 let e1 = nodes[i], e2 = nodes[i+1];
-let n1 = e1._out|| e1.audioNode;
-let n2 = e2._in || e2.audioNode;
 
-if (this._debugConnection) alert (`${this.label}: connecting ${e1.label} to ${e2.label}`);
-
-n1.connect (n2);
+this.debugConnection (`${this.label}: connecting ${e1.label} ${e1._out} to ${e2.label} ${e2._in}`);
+e1._out.connect (e2._in);
 } // for
 
-this.connect ();
+if (this.lastElementChild._out) {
+this.debugConnection (`${this.label}: connecting  ${this.lastElementChild.label} ${this.lastElementChild._out} to series output`);
+this.lastElementChild._out.connect (this._out);
+} // if
+
+this.debugElementCreation (`created ${this.label}`);
 } // connectAll
 
-connect () {
-let first = this.firstElementChild, last = this.lastElementChild;
-if (this.debugConnection) alert (`this.label: finalizing connection: ${first.label}, ${last.label}`);
-this._in.connect (first._in || first.audioNode);
-(last._in || last.audioNode).connect (this._out);
-} // connect
-
-
-labelChanged (value) {
-this.label = value;
-} // labelChanged
 
 } // class AudioSeries
 

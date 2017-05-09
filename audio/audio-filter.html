@@ -116,46 +116,46 @@ observer: "gainChanged"
 constructor () {
 super ();
 instanceCount += 1;
-this._id = `${AudioFilter.is + instanceCount}`;
+this._id = AudioFilter.is + instanceCount;
+this.label = this._id;
 
-this.audioNode = audio.createBiquadFilter ();
+this._audioIn = this._audioOut = audio.createBiquadFilter ();
 this._in = audio.createGain();
 this._out = audio.createGain();
-this.connect ();
-if (this._debug) alert (`${this.label}: created ${this.audioNode}`);
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck(AudioFilter.is)) {
+this.debugElementCreation (`${this.label}: created ${this._audioIn}`);
+this._connect ();
 this.addFieldLabels ();
 } // if
 } // connectedCallback
 
 
 typeChanged (value) {
-//if (this.audioNode)
- this.audioNode.type = value;
+this._audioIn.type = value;
 } // typeChanged
 
 gainChanged (value) {
-//if (this.audioNode)
- this.audioNode.gain.value = value;
+//if (this._audioIn)
+ this._audioIn.gain.value = value;
 } // gainChanged
 
 qChanged (value) {
-//if (this.audioNode)
- this.audioNode.Q.value = value;
+//if (this._audioIn)
+ this._audioIn.Q.value = value;
 } // qChanged
 
 frequencyChanged (value) {
-//if (this.audioNode)
- this.audioNode.frequency.value = value;
+//if (this._audioIn)
+ this._audioIn.frequency.value = value;
 } // frequencyChanged
 
 detuneChanged (value) {
-//if (this.audioNode)
- this.audioNode.detune.value = value;
+//if (this._audioIn)
+ this._audioIn.detune.value = value;
 } // detuneChanged
 
 

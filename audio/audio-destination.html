@@ -23,13 +23,16 @@ static get is() { return "audio-destination"; }
 constructor () {
 super ();
 this.label = "audio-destination";
-this.audioNode = audio.destination;
-if (this._debug) alert (`created ${this.audioNode}`);
+this._audioIn = this._audioOut = audio.destination;
+this._in = audio.createGain ();
+this._out = null;
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck (AudioDestination.is)) {
+this.debugElementCreation (`created ${this.label}`);
+this._connect ();
 } // if
 } // connectedCallback
 

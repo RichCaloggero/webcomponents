@@ -47,20 +47,25 @@ observer: "gainChanged"
 constructor () {
 super ();
 instanceCount += 1;
-this._id = `${AudioGain.is + instanceCount}`;
-this.audioNode = audio.createGain();
-if (this._debug) alert (`${this.label}: created ${this.audioNode}`);
+this._id = AudioGain.is + instanceCount;
+this.label = this._id;
+
+this._in = audio.createGain();
+this._out = audio.createGain ();
+this._audioIn = this._audioOut = audio.createGain();
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck(AudioGain.is)) {
+this._connect ();
+this.debugElementCreation (`${this.label}: created ${this._audioIn}`);
 this.addFieldLabels ();
 } // if
 } // connectedCallback
 
 gainChanged (value) {
-if (this.audioNode) this.audioNode.gain.value = value;
+this._audioIn.gain.value = value;
 } // gainChanged
 
 } // class AudioGain

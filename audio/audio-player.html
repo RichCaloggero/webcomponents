@@ -17,6 +17,7 @@ display: block;
 
 <script>
 "use strict";
+var instanceCount = 0;
 
 class AudioPlayer extends _AudioContext_ {
 static get is() { return "audio-player"; }
@@ -27,25 +28,29 @@ src: {
 type: String,
 value: "",
 notify: true,
-observer: "srcChanged"
+//observer: "srcChanged"
 } // src
 }; // return
 } // get properties
 
 constructor () {
 super ();
+instanceCount += 1;
+this._id = AudioPlayer.is + instanceCount;
+this.label = this._id;
+
+this._audioIn = this._audioOut = null;
+this._out = audio.createGain();
 } // constructor
 
 connectedCallback  () {
 super.connectedCallback();
 if (this.contextCheck(AudioPlayer.is)) {
-this.audioNode = audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
-if (this._debug) alert (`created ${this.audioNode}`);
+this._audioIn = this._audioOut= audio.createMediaElementSource (this.shadowRoot.querySelector("audio"));
+this._connect ();
+this.debugElementCreation (`created ${this.label}`);
 } // if
 } // connectedCallback
-
-srcChanged (_src) {
-} // srcChanged
 
 } // class AudioPlayer
 

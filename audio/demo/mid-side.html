@@ -31,21 +31,46 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<audio-parallel>
-<audio-series label="sum signal">
+
+<audio-parallel><audio-series label="sum signal">
+<audio-split><audio-series>
 <audio-merge></audio-merge>
-<audio-gain  gain="0.5"></audio-gain>
+<audio-gain  label="center level" gain="0.5"></audio-gain>
+</audio-series></audio-split>
 </audio-series>
 
 <audio-series label="difference signal">
-<audio-split>
-<audio-series label="channel 1"><audio-gain label="wet left"></audio-gain></audio-series>
-<audio-series label="channel2"><audio-gain label="wet right" gain="-1"></audio-gain></audio-series>
-</audio-split>
+<audio-split><audio-series label="channel 1">
+<audio-gain label="wet left"></audio-gain>
+</audio-series><audio-series label="channel2">
+<audio-gain label="wet right" gain="-1"></audio-gain>
+</audio-series></audio-split>
+
+<audio-merge></audio-merge>
+<audio-gain label="side level" gain="0.5"></audio-gain>
+<audio-split reverse><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+
 </audio-series>
 </audio-parallel>
 
-<audio-gain label="output"></audio-gain>
+<!-- now have left channel sum, right channel difference -->
+
+<audio-parallel><audio-series>
+<!-- left output channel -->
+<audio-split><audio-series><audio-merge></audio-merge></audio-series></audio-split>
+</audio-series><audio-series>
+<!-- right output channel -->
+<audio-split><audio-series>
+<audio-gain> gain="0.5"></audio-gain>
+</audio-series><audio-series>
+<audio-gain gain="-1"></audio-gain>
+</audio-series></audio-split>
+<audio-split reverse><audio-series><audio-merge></audio-merge></audio-series></audio-split>
+</audio-series>
+</audio-parallel>
+
+
+<audio-gain label="master volume"></audio-gain>
 
 <audio-destination></audio-destination>
 </audio-series>

@@ -48,22 +48,23 @@ connectAll (nodes) {
 var channel1 = this.firstElementChild, channel2 = this.lastElementChild;
 
 this.debugConnection (`split: connecting all ${nodes.length} nodes`);
-if (nodes.length !== 2) {
-alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
+if (nodes.length < 1) {
+//alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
+alert ("empty element ignored");
 return;
 } // if
 
-if (channel1 instanceof AudioSeries && channel2 instanceof AudioSeries) {
-this._in.connect (channel1._in, 0);
-this._in.connect (channel2._in, 1);
+//if (channel1 instanceof AudioSeries && channel2 instanceof AudioSeries) {
+if (channel1) this._in.connect (channel1._in, 0);
+if (channel2) this._in.connect (channel2._in, 1);
 
-channel1._out.connect (this._out, 0, this.reverse? 1 : 0);
-channel2._out.connect (this._out, 0, this.reverse? 1 : 0);
+if (channel1) channel1._out.connect (this._out, 0, this.reverse? 1 : 0);
+if (channel2) channel2._out.connect (this._out, 0, this.reverse? 1 : 0);
 this.debugElementCreation (`created ${this.label}`);
 
-} else {
-alert ("split can only contain exactly 2 nodes, each of which must be an audio-series");
-} // if
+//} else {
+//alert ("split can only contain exactly 2 nodes, each of which must be an audio-series");
+//} // if
 } // connectAll
 
 } // class AudioSplit

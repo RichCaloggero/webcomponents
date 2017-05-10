@@ -26,7 +26,7 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioParallel.is + instanceCount;
-this.label = this._id;
+if (this._debug) this.label = this._id;
 
 this._in = audio.createGain();
 this._out = audio.createGain();

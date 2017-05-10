@@ -32,7 +32,7 @@ static get properties () {
 return {
 label: {
 type: String,
-value: "gain"
+value: ""
 }, // label
 gain: {
 type: Number,
@@ -48,7 +48,7 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioGain.is + instanceCount;
-this.label = this._id;
+if (this._debug) this.label = this._id;
 
 this._in = audio.createGain();
 this._out = audio.createGain ();

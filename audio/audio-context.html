@@ -154,6 +154,10 @@ alert (e);
 } // whenAllChildrenLoaded
 
 addFieldLabels () {
+var groupLabel = this.shadowRoot.querySelector (".label");
+var hide = (! groupLabel || !groupLabel.textContent);
+//alert (groupLabel && groupLabel.textContent);
+
 Array.from(this.shadowRoot.querySelectorAll (".field"))
 .forEach ((field) => {
 var name, control, label, id;
@@ -165,6 +169,7 @@ id = this._id + "-" + name;
 control.setAttribute("id", id);
 //control.setAttribute ("role", "application");
 label.setAttribute ("for", id);
+if (hide) field.setAttribute ("style", "display:none");
 });
 } // addFieldLabels
 

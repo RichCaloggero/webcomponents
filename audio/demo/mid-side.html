@@ -32,7 +32,7 @@
 </audio-player>
 
 
-<audio-parallel><audio-series label="sum signal">
+<audio-parallel><audio-series >
 <audio-split><audio-series>
 <audio-merge></audio-merge>
 <audio-gain  label="center level" gain="0.5"></audio-gain>
@@ -40,10 +40,10 @@
 </audio-series>
 
 <audio-series label="difference signal">
-<audio-split><audio-series label="channel 1">
-<audio-gain label="wet left"></audio-gain>
-</audio-series><audio-series label="channel2">
-<audio-gain label="wet right" gain="-1"></audio-gain>
+<audio-split><audio-series>
+<audio-gain></audio-gain>
+</audio-series><audio-series>
+<audio-gain gain="-1"></audio-gain>
 </audio-series></audio-split>
 
 <audio-merge></audio-merge>

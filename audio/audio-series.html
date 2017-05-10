@@ -17,6 +17,7 @@ display: block;
 
 <script>
 "use strict";
+var instanceCount = 0;
 
 class AudioSeries extends _AudioContext_ {
 static get is() { return "audio-series"; }
@@ -33,6 +34,10 @@ value: "series",
 
 constructor () {
 super ();
+instanceCount += 1;
+this._id = AudioSeries.is + instanceCount;
+if (this._debug) this.label = this._id;
+
 this._in = audio.createGain ();
 this._out = audio.createGain ();
 } // constructor

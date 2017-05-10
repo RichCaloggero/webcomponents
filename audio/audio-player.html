@@ -37,7 +37,7 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioPlayer.is + instanceCount;
-this.label = this._id;
+if (this._debug) this.label = this._id;
 
 this._audioIn = this._audioOut = null;
 this._out = audio.createGain();

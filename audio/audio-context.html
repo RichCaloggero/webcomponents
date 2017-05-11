@@ -20,7 +20,9 @@ display: block;
 
 <script>
 "use strict";
+(function () {
 var _root = null;
+var _debug = false, _debugConnection = false, _debugInternalConnection = false, _debugElementCreation = false, _debugUI = false;
 
 window._AudioContext_ = class _AudioContext_ extends Polymer.Element {
 static get is() { return "audio-context"; }
@@ -29,9 +31,13 @@ static get properties() {
 return {
 _debug: {
 type: Boolean,
-value: false,
-//observer: "_debugChanged"
+value: false
 }, // _debug
+
+_debugUI: {
+type: Boolean,
+value: false
+}, // _debugUI
 
 _debugElementCreation: {
 type: Boolean,
@@ -76,6 +82,11 @@ this.audio = window.audio;
 connectedCallback () {
 super.connectedCallback ();
 if (! _root) _root = this.shadowRoot.querySelector (".audio-context");
+if (this._debug) _debug = true;
+if (this._debugUI) _debugUI = true;
+if (this._debugConnection) _debugConnection = true;
+if (this._debugInternalConnection) _debugInternalConnection = true;
+if (this._debugElementCreation) _debugElementCreation = true;
 } // connectedCallback
 
 _bypass (value) {
@@ -169,24 +180,30 @@ id = this._id + "-" + name;
 control.setAttribute("id", id);
 //control.setAttribute ("role", "application");
 label.setAttribute ("for", id);
-if (hide) field.setAttribute ("style", "display:none");
+if (hide && !this.__debugUI) field.setAttribute ("style", "display:none");
 });
 } // addFieldLabels
 
+/// debugging
+get __debug () {return _debug;}
+get __debugElementCreation () {return _debugElementCreation;}
+get __debugConnection () {return _debugConnection;}
+get __debugInternalConnection () {return _debugInternalConnection;}
+
 debugElementCreation (message) {
-if (this._debug && this._debugElementCreation) {
+if (this.__debug && this.__debugElementCreation) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugElementCreation
 
 debugConnection (message) {
-if (this._debug && this._debugConnection) {
+if (this.__debug && this.__debugConnection) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugConnection
 
 debugInternalConnection (message) {
-if (this._debug && this._debugConnection && this._debugInternalConnection) {
+if (this.__debug && this.__debugConnection && _debugInternalConnection) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugConnection
@@ -220,5 +237,6 @@ this.name = value;
 } // class _AudioContext_
 
 window.customElements.define(_AudioContext_.is, _AudioContext_);
+})();
 </script>
 </dom-module>

@@ -47,6 +47,8 @@
 </audio-series></audio-split>
 
 <audio-merge></audio-merge>
+
+<audio-filter type="lowshelf" frequency="100.0" gain="-30.0" q="1.0"></audio-filter>
 <audio-gain label="side level" gain="0.5"></audio-gain>
 <audio-split reverse><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 
@@ -57,7 +59,10 @@
 
 <audio-parallel><audio-series>
 <!-- left output channel -->
-<audio-split><audio-series><audio-merge></audio-merge></audio-series></audio-split>
+<audio-split><audio-series><audio-merge></audio-merge>
+<audio-filter label="left phase" type="allpass" frequency="400" q="1.0"></audio-filter>
+</audio-series></audio-split>
+
 </audio-series><audio-series>
 <!-- right output channel -->
 <audio-split><audio-series>
@@ -65,7 +70,9 @@
 </audio-series><audio-series>
 <audio-gain gain="-1"></audio-gain>
 </audio-series></audio-split>
-<audio-split reverse><audio-series><audio-merge></audio-merge></audio-series></audio-split>
+<audio-split reverse><audio-series><audio-merge></audio-merge>
+<audio-filter label="right phase" type="allpass" frequency="400" q="1.0"></audio-filter>
+</audio-series></audio-split>
 </audio-series>
 </audio-parallel>
 

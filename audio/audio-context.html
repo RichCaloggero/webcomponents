@@ -41,12 +41,12 @@ value: false
 
 _debugElementCreation: {
 type: Boolean,
-value: true
+value: false
 }, // _debugElementCreation
 
 _debugConnection: {
 type: Boolean,
-value: true
+value: false
 }, // _debugConnection
 
 _debugInternalConnection: {
@@ -89,6 +89,10 @@ if (this._debugInternalConnection) _debugInternalConnection = true;
 if (this._debugElementCreation) _debugElementCreation = true;
 } // connectedCallback
 
+_invertPhase (value ) {
+this._in.gain.value = (value)? -1.0 : 1.0;
+} // _invertPhase
+
 _bypass (value) {
 if (this._in && this._out 
 && !(this instanceof AudioParallel) && !(this instanceof AudioSeries) && !(this instanceof AudioSplit) && !(this instanceof AudioMerge)) {
@@ -96,9 +100,11 @@ if (this._in && this._out
 if (value) {
 this._disconnect ();
 this._in.connect (this._out);
+this._invertPhase(false);
 } else {
 this._disconnect ();
 this._connect ();
+this._invertPhase (this.invertPhase);
 } // if
 } // if
 } // _bypass
@@ -180,33 +186,41 @@ id = this._id + "-" + name;
 control.setAttribute("id", id);
 //control.setAttribute ("role", "application");
 label.setAttribute ("for", id);
-if (hide && !this.__debugUI) field.setAttribute ("style", "display:none");
+if (hide && !_debugUI) field.setAttribute ("style", "display:none");
 });
 } // addFieldLabels
 
 /// debugging
-get __debug () {return _debug;}
-get __debugElementCreation () {return _debugElementCreation;}
-get __debugConnection () {return _debugConnection;}
-get __debugInternalConnection () {return _debugInternalConnection;}
+__debug () {return _debug;}
+__debugElementCreation () {return this.__debug() && _debugElementCreation;}
+__debugConnection () {return this.__debug() && _debugConnection;}
+__debugInternalConnection () {return this.__debug() && _debugInternalConnection;}
+__debugUI () {return this.__debugUI() && _debugUI;}
+
 
 debugElementCreation (message) {
-if (this.__debug && this.__debugElementCreation) {
+if (this.__debugElementCreation()) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugElementCreation
 
 debugConnection (message) {
-if (this.__debug && this.__debugConnection) {
+if (this.__debugConnection()) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugConnection
 
 debugInternalConnection (message) {
-if (this.__debug && this.__debugConnection && _debugInternalConnection) {
+if (this.__debugInternalConnection()) {
 _AudioContext_.statusMessage ("debug: " + message);
 } // if
 } // debugConnection
+
+debugUI (message) {
+if (this.__debugUI()) {
+_AudioContext_.statusMessage ("debug: " + message);
+} // if
+} // debugUI
 
 static statusMessage (message) {
 var status = _root.querySelector (".audio-context .status");

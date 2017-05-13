@@ -24,7 +24,6 @@ name: String,
 label: String,
 _debug: {
 type: Boolean,
-value: this._debug
 } // _debug
 }; // return
 } // get properties
@@ -41,7 +40,7 @@ if (this._debug) _debug = true;
 alert (`x-test: instanceCount=${instanceCount}, componentName=${componentName}, debug()=${this.debug()}, _id=${this._id}, label=${this.label}, name=${this.name}, _debug=${this._debug}`);
 } // connectedCallback
 
-debug () {return _debug;}
+debug () {return this._debug || _debug;}
 
 } // class XTest
 

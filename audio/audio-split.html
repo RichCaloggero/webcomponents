@@ -24,7 +24,9 @@ static get is() { return "audio-split"; }
 
 static get properties () {
 return {
-reverse: Boolean
+label: String,
+reverse: Boolean,
+swap: Boolean
 }; // return
 } // get properties
 
@@ -32,7 +34,7 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioSplit.is + instanceCount;
-if (this._debug) this.label = this._id;
+if (this.__debug) this.label = this._id;
 
 this._in = audio.createChannelSplitter (2);
 this._out = audio.createChannelMerger (2);
@@ -46,25 +48,27 @@ this.whenAllChildrenLoaded (this.connectAll);
 
 connectAll (nodes) {
 var channel1 = this.firstElementChild, channel2 = this.lastElementChild;
+if (channel1 === channel2) channel2 = null;
 
 this.debugConnection (`split: connecting all ${nodes.length} nodes`);
 if (nodes.length < 1) {
-//alert (`split: needs exactly 2 children, one for each channel; ${nodes.length} children found`);
 alert ("empty element ignored");
 return;
 } // if
 
-//if (channel1 instanceof AudioSeries && channel2 instanceof AudioSeries) {
-if (channel1) this._in.connect (channel1._in, 0);
-if (channel2) this._in.connect (channel2._in, 1);
+alert (`split: ${this.label} ${this.swap} ${this.reverse}, ${this.swap? 1:0} ${this.reverse? 1:0}`);
+if (channel1) {
+this._in.connect (channel1._in, this.swap? 1 : 0);
+channel1._out.connect (this._out, 0, this.reverse? 1 : 0);
+} // if
 
-if (channel1) channel1._out.connect (this._out, 0, this.reverse? 1 : 0);
-if (channel2) channel2._out.connect (this._out, 0, this.reverse? 1 : 0);
+if (channel2) {
+alert ("split: channel2");
+this._in.connect (channel2._in, this.swap? 0 : 1);
+channel2._out.connect (this._out, 0, this.reverse? 0 : 1);
+} // if
+
 this.debugElementCreation (`created ${this.label}`);
-
-//} else {
-//alert ("split can only contain exactly 2 nodes, each of which must be an audio-series");
-//} // if
 } // connectAll
 
 } // class AudioSplit

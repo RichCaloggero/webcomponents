@@ -25,8 +25,8 @@ static get is() { return "audio-split"; }
 static get properties () {
 return {
 label: String,
-reverse: Boolean,
-swap: Boolean
+swapOutputs: Boolean,
+swapInputs: Boolean
 }; // return
 } // get properties
 
@@ -34,7 +34,7 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioSplit.is + instanceCount;
-if (this.__debug) this.label = this._id;
+if (this.__debug()) this.label = this._id;
 
 this._in = audio.createChannelSplitter (2);
 this._out = audio.createChannelMerger (2);
@@ -47,25 +47,36 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-var channel1 = this.firstElementChild, channel2 = this.lastElementChild;
-if (channel1 === channel2) channel2 = null;
+var channel1, channel2, gain;
 
-this.debugConnection (`split: connecting all ${nodes.length} nodes`);
+if (nodes.length === 0) {
+channel1 = gain;
+channel2 = null;
+} else if (nodes.length === 1) {
+channel1 = this.firstElementChild;
+channel2 = null;
+} else {
+channel1 = this.firstElementChild, channel2 = this.lastElementChild;
+} // if
+
+
+/*this.debugConnection (`split: connecting all ${nodes.length} nodes`);
 if (nodes.length < 1) {
 alert ("empty element ignored");
 return;
 } // if
+*/
 
-alert (`split: ${this.label} ${this.swap} ${this.reverse}, ${this.swap? 1:0} ${this.reverse? 1:0}`);
+//alert (`split: ${this.label} ${this.swapInputs} ${this.swapOutputs}, ${this.swapInputs? 1:0} ${this.swapOutputs? 1:0}`);
 if (channel1) {
-this._in.connect (channel1._in, this.swap? 1 : 0);
-channel1._out.connect (this._out, 0, this.reverse? 1 : 0);
+this._in.connect (channel1._in, 0, this.swapInputs? 1 : 0);
+channel1._out.connect (this._out, 0, this.swapOutputs? 1 : 0);
 } // if
 
 if (channel2) {
-alert ("split: channel2");
-this._in.connect (channel2._in, this.swap? 0 : 1);
-channel2._out.connect (this._out, 0, this.reverse? 0 : 1);
+//alert ("split: channel2");
+this._in.connect (channel2._in, 0, this.swapInputs? 0 : 1);
+channel2._out.connect (this._out, 0, this.swapOutputs? 0 : 1);
 } // if
 
 this.debugElementCreation (`created ${this.label}`);

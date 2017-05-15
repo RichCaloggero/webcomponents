@@ -21,6 +21,7 @@
 <link rel="import" href="../audio-destination.html">
 <link rel="import" href="../audio-gain.html">
 <link rel="import" href="../audio-filter.html">
+<link rel="import" href="../audio-delay.html">
 
 </head>
 <body>
@@ -31,43 +32,62 @@
 <audio-player src="music.mp3">
 </audio-player>
 
+<!--<audio-parallel><audio-series>
 
-<audio-parallel><audio-series label="sum signal">
+<audio-gain></audio-gain>
+
+</audio-series><audio-series>
+
+<audio-split reverse><audio-series>
+<audio-delay label="left delay" invertPhase></audio-delay>
+</audio-series><audio-series>
+<audio-delay label="right delay" invertPhase></audio-delay>
+</audio-series></audio-split>
+
+</audio-series></audio-parallel>
+-->
+
+<audio-parallel><audio-series>
+
+<audio-merge></audio-merge>
 <audio-split><audio-series>
-<audio-merge></audio-merge>
-<audio-gain  label="center level" gain="0.5"></audio-gain>
-</audio-series></audio-split>
-</audio-series>
-
-<audio-series label="difference signal">
-<audio-split><audio-series label="channel 1">
-<audio-gain label="wet left"></audio-gain>
-</audio-series><audio-series label="channel2">
-<audio-gain label="wet right" gain="-1"></audio-gain>
+<audio-gain  label="center level" gain="1.5"></audio-gain>
 </audio-series></audio-split>
 
+</audio-series><audio-series>
+
+<audio-split><audio-series>
+<audio-gain></audio-gain>
+</audio-series><audio-series>
+<audio-gain gain="-1"></audio-gain>
+</audio-series></audio-split>
+
 <audio-merge></audio-merge>
-<audio-gain label="side level" gain="0.5"></audio-gain>
+<audio-gain label="side level" gain="2.0"></audio-gain>
 <audio-split reverse><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 
-</audio-series>
-</audio-parallel>
+</audio-series></audio-parallel>
 
 <!-- now have left channel sum, right channel difference -->
 
 <audio-parallel><audio-series>
+
 <!-- left output channel -->
-<audio-split><audio-series><audio-merge></audio-merge></audio-series></audio-split>
+<audio-merge></audio-merge>
+<audio-split><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+
 </audio-series><audio-series>
+
 <!-- right output channel -->
 <audio-split><audio-series>
-<audio-gain> gain="0.5"></audio-gain>
+<audio-gain>></audio-gain>
 </audio-series><audio-series>
 <audio-gain gain="-1"></audio-gain>
 </audio-series></audio-split>
-<audio-split reverse><audio-series><audio-merge></audio-merge></audio-series></audio-split>
-</audio-series>
-</audio-parallel>
+<audio-merge></audio-merge>
+
+<audio-split reverse><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+</audio-series></audio-parallel>
 
 
 <audio-gain label="master volume"></audio-gain>

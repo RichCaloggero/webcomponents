@@ -9,7 +9,14 @@ display: block;
 }
 </style>
 
-<div class="audio-parallel">
+<div class="audio-parallel" role="region" aria-label$="{{label}}">
+<span class="label">{{label}}</span>
+
+<div class="field" data-name="bypass">
+<label>bypass</label>
+<br><input type="checkbox" checked="{{bypass::change}}" accesskey="x">
+</div>
+
 <slot></slot>
 </div>
 
@@ -22,19 +29,34 @@ var instanceCount = 0;
 class AudioParallel extends _AudioContext_ {
 static get is() { return "audio-parallel"; }
 
+static get properties () {
+return {
+label: String,
+bypass: {
+type: Boolean,
+value: false,
+notify: true,
+observer: "_bypass"
+}, // bypass
+}; // return
+} // get properties
+
 constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioParallel.is + instanceCount;
-if (this._debug) this.label = this._id;
+if (this.__debug()) this.label = this._id;
 
 this._in = audio.createGain();
 this._out = audio.createGain();
+this._audioIn = audio.createGain ();
+this._audioOut = audio.createGain ();
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 this.whenAllChildrenLoaded (this.connectAll);
+this.addFieldLabels ();
 } // connectedCallback
 
 connectAll (nodes) {
@@ -43,11 +65,12 @@ this.debugConnection (`${this.label}: connecting all ${nodes.length} nodes`);
 for (var i=0; i<nodes.length; i++) {
 let e = nodes[i];
 this.debugConnection (`${this.label}: connecting ${e.label} in parallel`);
-this._in.connect (e._in);
-e._out.connect (this._out);
+this._audioIn.connect (e._in);
+e._out.connect (this._audioOut);
 } // for
 
-this._out.gain.value = 1/nodes.length;
+this._audioOut.gain.value = 1/nodes.length;
+this._connect ();
 } // connectAll
 
 } // class AudioParallel

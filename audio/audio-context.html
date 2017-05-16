@@ -95,7 +95,10 @@ this._in.gain.value = (value)? -1.0 : 1.0;
 
 _bypass (value) {
 if (this._in && this._out 
-&& !(this instanceof AudioParallel) && !(this instanceof AudioSeries) && !(this instanceof AudioSplit) && !(this instanceof AudioMerge)) {
+//&& !(this instanceof AudioParallel)
+ && !(this instanceof AudioSeries) 
+&& !(this instanceof AudioSplit) 
+&& !(this instanceof AudioMerge)) {
 //alert (`bypass ${value} on ${this.audioNode}, ${this._in}, ${this._out}`);
 if (value) {
 this._disconnect ();

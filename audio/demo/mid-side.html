@@ -32,20 +32,18 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<!--<audio-parallel><audio-series>
+<audio-parallel label="phase weirdness"><audio-series>
 
-<audio-gain></audio-gain>
 
 </audio-series><audio-series>
 
 <audio-split swap-outputs><audio-series>
-<audio-delay label="left delay" invertPhase></audio-delay>
+<audio-delay label="left delay" delay-time=".0005" invert-phase></audio-delay>
 </audio-series><audio-series>
-<audio-delay label="right delay" invertPhase></audio-delay>
+<audio-delay label="right delay" delay-time="0.0005" invert-phase></audio-delay>
 </audio-series></audio-split>
 
 </audio-series></audio-parallel>
--->
 
 <audio-parallel><audio-series>
 

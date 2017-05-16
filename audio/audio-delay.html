@@ -59,7 +59,7 @@ type: Boolean,
 value: false,
 notify: true,
 observer: "_invertPhase"
-}, // bypass
+}, // invertPhase
 
 delayTime: {
 type: Number,
@@ -81,6 +81,10 @@ this._audioOut = this._audioIn;
 
 this._in = audio.createGain ();
 this._out = audio.createGain ();
+
+
+this._audioIn.channelCount = this._in.channelCount = this._out.channelCount = 1;
+this._audioIn.channelCountMode = this._in.channelCountMode = this._out.channelCountMode = "explicit";
 } // constructor
 
 connectedCallback () {

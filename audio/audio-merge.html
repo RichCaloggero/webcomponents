@@ -49,12 +49,15 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioMerge.is + instanceCount;
-if (this._debug) this.label = this._id;
+if (this.__debug()) this.label = this._id;
 
 this._in = audio.createChannelSplitter (2);
+this._out = audio.createGain ();
+this._out.channelCount = 2;
+this._out.channelCountMode = "explicit";
 this._left = audio.createGain ();
 this._right = audio.createGain ();
-this._out = audio.createGain ();
+this._left.channelCount = this._right.channelCount = 1;
 } // constructor
 
 connectedCallback () {

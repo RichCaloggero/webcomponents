@@ -28,8 +28,11 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<audio-merge></audio-merge>
-<audio-split swap-inputs><audio-series><audio-gain></sudio-gain></audio-series></audio-split>
+<audio-split swap-inputs swap-outputs><audio-series>
+<audio-gain></audio-gain>
+</audio-series><audio-series>
+<audio-gain></audio-gain>
+</audio-series></audio-split>
 
 <audio-gain label="master volume"></audio-gain>
 

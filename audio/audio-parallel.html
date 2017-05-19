@@ -24,6 +24,8 @@ display: block;
 
 <script>
 "use strict";
+
+(function () {
 var instanceCount = 0;
 
 class AudioParallel extends _AudioContext_ {
@@ -76,5 +78,6 @@ this._connect ();
 } // class AudioParallel
 
 window.customElements.define(AudioParallel.is, AudioParallel);
+})(); // module
 </script>
 </dom-module>

@@ -34,18 +34,22 @@
 
 <audio-parallel label="phase weirdness"><audio-series>
 
+<audio-gain></audio-gain>
+
+</audio-series><audio-series>
+
 <audio-split swap-outputs><audio-series>
 <audio-delay label="left delay" delay-time=".0005" invert-phase></audio-delay>
 </audio-series><audio-series>
 <audio-delay label="right delay" delay-time="0.0005" invert-phase></audio-delay>
 </audio-series></audio-split>
 
-<audio-gain gain="1.3"></audio-gain>
+<audio-gain label="inverted level" gain="1.3"></audio-gain>
 
 </audio-series></audio-parallel>
 
 
-<audio-parallel><audio-series>
+<audio-parallel label="l+r to mid-side"><audio-series>
 
 <audio-merge></audio-merge>
 <audio-split><audio-series>
@@ -67,17 +71,14 @@
 
 </audio-series></audio-parallel>
 
-<!-- now have left channel sum, right channel difference -->
 
-<audio-parallel><audio-series>
+<audio-parallel label="mid-side to l+r"><audio-series>
 
-<!-- left output channel -->
 <audio-merge></audio-merge>
 <audio-split><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 
 </audio-series><audio-series>
 
-<!-- right output channel -->
 <audio-split><audio-series>
 <audio-gain>></audio-gain>
 </audio-series><audio-series>
@@ -87,6 +88,7 @@
 
 <audio-split swap-outputs><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 </audio-series></audio-parallel>
+-->
 
 
 <audio-gain label="master volume"></audio-gain>

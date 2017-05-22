@@ -18,6 +18,7 @@
 <link rel="import" href="../audio-destination.html">
 <link rel="import" href="../audio-gain.html">
 <link rel="import" href="../audio-filter.html">
+<link rel="import" href="../audio-pan.html">
 
 </head>
 <body>
@@ -28,11 +29,7 @@
 <audio-player src="music.mp3">
 </audio-player>
 
-<audio-split swap-inputs swap-outputs><audio-series>
-<audio-gain></audio-gain>
-</audio-series><audio-series>
-<audio-gain></audio-gain>
-</audio-series></audio-split>
+<audio-pan x="0.77"></audio-pan>
 
 <audio-gain label="master volume"></audio-gain>
 

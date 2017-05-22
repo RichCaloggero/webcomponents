@@ -17,6 +17,8 @@ display: block;
 
 <script>
 "use strict";
+
+(function () {
 var instanceCount = 0;
 
 class AudioPlayer extends _AudioContext_ {
@@ -55,5 +57,6 @@ this.debugElementCreation (`created ${this.label}`);
 } // class AudioPlayer
 
 window.customElements.define(AudioPlayer.is, AudioPlayer);
+})(); // module
 </script>
 </dom-module>

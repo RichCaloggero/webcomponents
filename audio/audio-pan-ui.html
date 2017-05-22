@@ -1,4 +1,4 @@
-<!--<link rel="import" href="bower_components/polymer/lib/elements/dom-repeat.html">-->
+<link rel="import" href="bower_components/polymer/lib/elements/dom-repeat.html">
 <!--<link rel="import" href="../polymer/lib/elements/dom-if.html">-->
 
 <dom-module id="audio-pan">
@@ -12,55 +12,12 @@ display: block;
 <div class="audio-pan" role="region" aria-label$="{{label}}">
 <span class="label">{{label}}</span>
 
-<div class="field" data-name="bypass">
-<label>bypass</label>
-<br><input type="checkbox" checked="{{bypass::change}}">
+<template is="dom-repeat" items="{{ui}}">
+<div class="field" name$="{{item.name}}">
+<label for$="{{item.value.id}}">{{item.name}}</label>
+<br><input id$="{{item.value.id}}" type="number" value="{{item.name::change}}">
 </div>
-
-<div class="field" data-name="x">
-<label>x</label>
-<br><input type="number" value="{{x::change}}">
-</div>
-
-<div class="field" data-name="y">
-<label>y</label>
-<br><input type="number" value="{{y::change}}">
-</div>
-
-<div class="field" data-name="z">
-<label>z</label>
-<br><input type="number" value="{{z::change}}">
-</div>
-
-<div class="field" data-name="mmaxDistance">
-<label>max distance</label>
-<br><input type="number" value="{{maxDistance::change}}">
-</div>
-
-<div class="field" data-name="refDistance">
-<label>ref distance</label>
-<br><input type="number" value="{{refDistance::change}}">
-</div>
-
-<div class="field" data-name="rolloffFactor">
-<label>rolloff factor</label>
-<br><input type="number" value="{{rolloffFactor::change}}">
-</div>
-
-<div class="field" data-name="coneInnerAngle">
-<label>cone inner angle</label>
-<br><input type="number" value="{{coneInnerAngle::change}}">
-</div>
-
-<div class="field" data-name="coneOuterAngle">
-<label>cone outer angle</label>
-<br><input type="number" value="{{coneOuterAngle::change}}">
-</div>
-
-<div class="field" data-name="coneOuterGain">
-<label>cone outer gain</label>
-<br><input type="number" value="{{coneOuterGain::change}}">
-</div>
+</template>
 
 </div>
 </template>
@@ -76,12 +33,10 @@ static get is() { return "audio-pan"; }
 
 static get properties () {
 return {
-bypass: {
-type: Boolean,
-value: false,
-notify: true,
-observer: "_bypass"
-}, // bypass
+ui: {
+type: Array,
+value() {let properties = _AudioContext_.uiProperties(this, this._id); console.log("properties: ", JSON.stringify(properties)); return properties;} 
+}, // ui
 
 label: {
 type: String,
@@ -135,26 +90,9 @@ observer: "coneOuterGainChanged"
 }, // coneOuterGain
 
 distanceModel: String,
-maxDistance: {
-type: Number,
-value: 1.0,
-notify: true,
-observer: "maxDistanceChanged"
-}, // maxDistance
-
-refDistance: {
-type: Number,
-value: 1.0,
-notify: true,
-observer: "refDistanceChanged"
-}, // refDistance
-
-rolloffFactor: {
-type: Number,
-value: 1.0,
-notify: true,
-observer: "rolloffFactorChanged"
-}, // rolloffFactor
+maxDistance: Number,
+refDistance: Number,
+rolloffFactor: Number,
 
 orientationX: Number,
 orientationY: Number,
@@ -163,6 +101,11 @@ orientationZ: Number,
 }; // return
 } // get properties
 
+static get observers () {
+return [
+
+]; // return
+} // get observers
 
 constructor () {
 super ();
@@ -201,18 +144,6 @@ this._audioIn.positionY.value = value;
 zChanged (value) {
 this._audioIn.positionZ.value = value;
 } // zChanged
-
-maxDistanceChanged (value) {
-this._audioIn.maxDistance = value;
-} // maxDistanceChanged
-
-refDistanceChanged (value) {
-this._audioIn.refDistance = value;
-} // refDistanceChanged
-
-rolloffFactor(value) {
-this._audioIn.rolloffFactor = value;
-} // rolloffFactor
 
 } // class AudioPan
 

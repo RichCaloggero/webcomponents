@@ -94,7 +94,11 @@ this._in.gain.value = (value)? -1.0 : 1.0;
 } // _invertPhase
 
 _bypass (value) {
-if (this._in && this._out && this._audioIn && this._audioOut) {
+if (this._in && this._out 
+//&& !(this instanceof AudioParallel)
+ && !(this instanceof AudioSeries) 
+&& !(this instanceof AudioSplit) 
+&& !(this instanceof AudioMerge)) {
 //alert (`bypass ${value} on ${this.audioNode}, ${this._in}, ${this._out}`);
 if (value) {
 this._disconnect ();
@@ -174,7 +178,8 @@ addFieldLabels () {
 console.log ("addFieldLabels to ", this.constructor.is);
 var groupLabel = this.shadowRoot.querySelector (".label");
 var hide = ( !groupLabel || !groupLabel.textContent );
-//console.log(groupLabel && groupLabel.textContent);
+console.log(groupLabel && groupLabel.textContent);
+console.log ("- shadow: ", this.shadowRoot);
 
 Array.from(this.shadowRoot.querySelectorAll (".field"))
 .forEach ((field) => {
@@ -183,7 +188,7 @@ name = field.getAttribute("data-name") || field.getAttribute("field-name") || fi
 label = field.querySelector("label");
 control = field.querySelector("input, select, textarea");
 id = this._id + "-" + name;
-//console.log(`field: ${name} ${field} ${control} ${label}`);
+console.log(`field: ${name} ${field} ${control} ${label}`);
 control.setAttribute("id", id);
 //control.setAttribute ("role", "application");
 label.setAttribute ("for", id);
@@ -191,6 +196,17 @@ if (hide && !_debugUI) field.setAttribute ("style", "display:none");
 });
 } // addFieldLabels
 
+static uiProperties (element, _id) {
+let properties = element.constructor.properties;
+
+return Object.keys(properties)
+.map (p => {
+return {
+name: p,
+value: Object.assign({}, properties[p], {id: `${_id}-${p}`})
+}; // return
+}).filter (p => p.value.ui);
+} // uiProperties
 
 /// debugging
 __debug () {return _debug;}

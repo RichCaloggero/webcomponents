@@ -134,7 +134,11 @@ notify: true,
 observer: "coneOuterGainChanged"
 }, // coneOuterGain
 
-distanceModel: String,
+distanceModel: {
+type: String,
+value: "inverse"
+} , // distanceModel
+
 maxDistance: {
 type: Number,
 value: 1.0,
@@ -174,11 +178,6 @@ this._in = audio.createGain();
 this._out = audio.createGain();
 
 this._audioIn.panningModel = "HRTF";
-this._audioIn.distanceModel = "inverse";
-this._audioIn.maxDistance = 10.0;
-this._audioIn.coneInnerAngle = 0.0;
-this._audioIn.coneOuterAngle = 360.0;
-this._audioIn.coneOuterGain = 0.0;
 } // constructor
 
 connectedCallback () {

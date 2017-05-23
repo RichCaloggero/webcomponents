@@ -9,7 +9,14 @@ display: block;
 }
 </style>
 
-<div class="audio-series">
+<div class="audio-series" role="region" aria-label$="{{label}}">
+<span class="label">{{label}}</span>
+
+<div class="field" data-name="bypass">
+<label>Bypass</label>
+<br><input type="checkbox" checked="{{bypass::change}}">
+</div>
+
 <slot></slot>
 </div>
 
@@ -28,9 +35,15 @@ static get properties () {
 return {
 label: {
 type: String,
-value: "series",
-//observer: "labelChanged"
-} // label
+value: ""
+}, // label
+
+bypass: {
+type: Boolean,
+value: false,
+notify: true,
+observer: "_bypass"
+} // bypass
 }; // return
 } // get properties
 
@@ -38,23 +51,25 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioSeries.is + instanceCount;
-if (this._debug) this.label = this._id;
+//if (this.__debug()) this.label = this._id;
 
 this._in = audio.createGain ();
 this._out = audio.createGain ();
+this._audioIn = audio.createGain ();
+this._audioOut = audio.createGain ();
 } // constructor
 
 connectedCallback () {
+super.connectedCallback ();
 this.whenAllChildrenLoaded (this.connectAll);
+this.addFieldLabels ();
 } // connectedCallback
 
 connectAll (nodes) {
 if (nodes.length < 1) return;
-this.debugConnection (`${this.label}: connecting all ${nodes.length} nodes`);
 
 if (this.firstElementChild._in) {
-this.debugConnection (`${this.label}: connecting  series input to ${this.firstElementChild.label} ${this.firstElementChild._in}`);
-this._in.connect (this.firstElementChild._in);
+this._audioIn.connect (this.firstElementChild._in);
 } // if
 
 for (var i=0; i<nodes.length-1; i++) {
@@ -65,10 +80,10 @@ e1._out.connect (e2._in);
 } // for
 
 if (this.lastElementChild._out) {
-this.debugConnection (`${this.label}: connecting  ${this.lastElementChild.label} ${this.lastElementChild._out} to series output`);
-this.lastElementChild._out.connect (this._out);
+this.lastElementChild._out.connect (this._audioOut);
 } // if
 
+this._connect ();
 this.debugElementCreation (`created ${this.label}`);
 } // connectAll
 

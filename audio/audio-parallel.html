@@ -33,7 +33,11 @@ static get is() { return "audio-parallel"; }
 
 static get properties () {
 return {
-label: String,
+label: {
+type: String,
+value: ""
+}, // label
+
 bypass: {
 type: Boolean,
 value: false,

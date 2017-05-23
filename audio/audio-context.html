@@ -171,9 +171,9 @@ alert (e);
 
 
 addFieldLabels () {
-console.log ("addFieldLabels to ", this.constructor.is);
-var groupLabel = this.shadowRoot.querySelector (".label");
-var hide = ( !groupLabel || !groupLabel.textContent );
+let groupLabel = this.shadowRoot.querySelector (".label");
+let hide = !(groupLabel && groupLabel.textContent);
+console.log (`${this.constructor.is} (${groupLabel.textContent}): add labels to ${hide? "hidden" : "visible"} fields`);
 //console.log(groupLabel && groupLabel.textContent);
 
 Array.from(this.shadowRoot.querySelectorAll (".field"))

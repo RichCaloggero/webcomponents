@@ -76,15 +76,16 @@ instanceCount += 1;
 this._id = AudioDelay.is + instanceCount;
 if (this.__debug()) this.label = this._id;
 
-this._audioIn = audio.createDelay();
-this._audioOut = this._audioIn;
-
 this._in = audio.createGain ();
 this._out = audio.createGain ();
+this._audioIn = audio.createGain();
+this._audioOut = audio.createGain();
+this._audioNode = audio.createDelay();
+this._audioIn.connect (this._audioNode).connect (this._audioOut);
 
 
-this._audioIn.channelCount = this._in.channelCount = this._out.channelCount = 1;
-this._audioIn.channelCountMode = this._in.channelCountMode = this._out.channelCountMode = "explicit";
+this._audioIn.channelCount = this._in.channelCount = this._audioOut.channelCount = this._out.channelCount = this._audioNode.channelCount = 1;
+this._audioIn.channelCountMode = this._in.channelCountMode = this._audioOut.channelCountMode = this._out.channelCountMode = "explicit";
 } // constructor
 
 connectedCallback () {
@@ -97,7 +98,7 @@ this.addFieldLabels ();
 } // connectedCallback
 
 delayTimeChanged (value) {
-this._audioIn.delayTime.value = value;
+this._audioNode.delayTime.value = value;
 } // delayTimeChanged
 
 } // class AudioDelay

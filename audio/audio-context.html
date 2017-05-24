@@ -90,7 +90,7 @@ if (this._debugElementCreation) _debugElementCreation = true;
 } // connectedCallback
 
 _invertPhase (value ) {
-this._in.gain.value = (value)? -1.0 : 1.0;
+if (this._audioOut && this._audioOut.gain) this._audioOut.gain.value = (value)? -1.0 : 1.0;
 } // _invertPhase
 
 _bypass (value) {

@@ -34,7 +34,7 @@ display: block;
 <script>
 "use strict";
 
-//(function () {
+(function () {
 var instanceCount  = 0;
 
 class AudioDelay extends _AudioContext_ {
@@ -76,23 +76,14 @@ instanceCount += 1;
 this._id = AudioDelay.is + instanceCount;
 if (this.__debug()) this.label = this._id;
 
-this._in = audio.createGain ();
-this._out = audio.createGain ();
-this._audioIn = audio.createGain();
-this._audioOut = audio.createGain();
-this._audioNode = audio.createDelay();
-this._audioIn.connect (this._audioNode).connect (this._audioOut);
-
-
+this._init (audio.createDelay());
 this._audioIn.channelCount = this._in.channelCount = this._audioOut.channelCount = this._out.channelCount = this._audioNode.channelCount = 1;
-this._audioIn.channelCountMode = this._in.channelCountMode = this._audioOut.channelCountMode = this._out.channelCountMode = "explicit";
+this._audioIn.channelCountMode = this._in.channelCountMode = this._audioOut.channelCountMode = this._out.channelCountMode = this._audioNode.channelCountMode = "explicit";
 } // constructor
 
 connectedCallback () {
 super.connectedCallback ();
 if (this.contextCheck(AudioDelay.is)) {
-this._connect ();
-this.debugElementCreation (`created ${this.label}`);
 this.addFieldLabels ();
 } // if
 } // connectedCallback
@@ -104,6 +95,6 @@ this._audioNode.delayTime.value = value;
 } // class AudioDelay
 
 window.customElements.define(AudioDelay.is, AudioDelay);
-//})();
+})();
 </script>
 </dom-module>

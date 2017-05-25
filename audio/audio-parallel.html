@@ -51,12 +51,8 @@ constructor () {
 super ();
 instanceCount += 1;
 this._id = AudioParallel.is + instanceCount;
-//if (this.__debug()) this.label = this._id;
 
-this._in = audio.createGain();
-this._out = audio.createGain();
-this._audioIn = audio.createGain ();
-this._audioOut = audio.createGain ();
+this._init ();
 } // constructor
 
 connectedCallback () {
@@ -76,7 +72,6 @@ e._out.connect (this._audioOut);
 } // for
 
 this._audioOut.gain.value = 1/nodes.length;
-this._connect ();
 } // connectAll
 
 } // class AudioParallel

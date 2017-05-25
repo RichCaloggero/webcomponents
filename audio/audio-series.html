@@ -53,10 +53,7 @@ instanceCount += 1;
 this._id = AudioSeries.is + instanceCount;
 //if (this.__debug()) this.label = this._id;
 
-this._in = audio.createGain ();
-this._out = audio.createGain ();
-this._audioIn = audio.createGain ();
-this._audioOut = audio.createGain ();
+this._init ();
 } // constructor
 
 connectedCallback () {
@@ -83,7 +80,6 @@ if (this.lastElementChild._out) {
 this.lastElementChild._out.connect (this._audioOut);
 } // if
 
-this._connect ();
 this.debugElementCreation (`created ${this.label}`);
 } // connectAll
 

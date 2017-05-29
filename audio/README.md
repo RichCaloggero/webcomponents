@@ -1,6 +1,8 @@
 # Webaudio Components
 
-This project was originally begun as a way to learn Polymer, but has since taken on a life of its own.
+This project was begun as a way to learn Polymer.
+
+## Elements
 
 The package contains two distinct types of elements:
 - connectors
@@ -73,13 +75,33 @@ In the HTML domain, the entire HTML graph needs to be wrapped in a `<audio-conte
 - webaudio can deal with more than 2 channels, but this project assumes all elements either 1 or 2 channels
 	+ webaudio has notion of channels and destinations which are a bit hard to get my head around
 	+ generally nodes are stereo in and stereo out, but they can be mono as well depending on channelCount, channelCountMode
-	+ filter and delay are explicitly mono
+	+ filter and delay are explicitly mono, but others can be either depending on what they are connected to
 	
 ## Processors
 
 These take input from their previous sibling, process it, and pipe output to their next sibling.
 If a label attribute is supplied, they display a UI; if no label is supplied then they stay hidden.
 All parameters displayed in the UI can be set in the HTML via attributes.
+
+### Style
+
+No attempt has been made to style anything.
+This is left to the hosting document's.
+
+### Accessibility
+
+Each component's UI lives in its own region (`role="region"`) and its labeled via `aria-label`.
+The group label is specified via HTML `label` attribute on host element.
+Because polymer does not encapsulate components completely, IDs still leak out, so we avoid IDref here in favor of `aria-label`.
+
+We also label the group via span element with `role="heading"` and an `aria-level` corresponding to the nesting level of the host element within the audio context.
+This helps navigate the UI and maintain a better sense of location within the hierarchy.
+We end up with duplicate group label announcement: both the `aria-label` and the visible group label are seen by the screen reader.
+
+- if we eliminate the visible label announcement via `aria-hidden`, we lose the hierarchy info provided by the heading level
+- if we eliminate the `aria-label` on the group container, we lose group label announcement on focus (i.e. when tab used to move through the UI) and we lose landmark
+
+There seems to be no good solution for this annoyance at present.
 
 ## Connectors
 

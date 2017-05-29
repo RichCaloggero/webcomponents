@@ -93,18 +93,15 @@ The hope is that when heard through speakers, the slightly delayed phase inverte
 <audio-merge></audio-merge>
 
 <!-- and put on left output with gain adjustment -->
-<audio-split><audio-series>
-<audio-gain  label="center level" gain="1.5"></audio-gain>
-</audio-series></audio-split>
+<audio-split><audio-gain  label="center level" gain="1.5"></audio-gain></audio-split>
 
 </audio-series><audio-series>
 <!-- this takes difference -->
 
-<audio-split><audio-series>
+<audio-split>
 <audio-gain></audio-gain>
-</audio-series><audio-series>
 <audio-gain gain="-1"></audio-gain>
-</audio-series></audio-split>
+</audio-split>
 
 <!-- merge to one channel -->
 <audio-merge></audio-merge>
@@ -112,7 +109,7 @@ The hope is that when heard through speakers, the slightly delayed phase inverte
 <audio-gain label="side level" gain="2.0"></audio-gain>
 
 <!-- and send to right output -->
-<audio-split swap-outputs><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+<audio-split swap-outputs><audio-gain></audio-gain></audio-split>
 
 </audio-series></audio-parallel>
 
@@ -126,25 +123,25 @@ Any level adjustments made to sum or difference with thus be reflected in the re
 or 2L = (L+R) + (L-R) 
 I drop the gain correction factor here...
 -->
+
 <!-- M+S -->
 <audio-merge></audio-merge>
 
 <!-- send to left channel of final output -->
-<audio-split><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+<audio-split><audio-gain></audio-gain></audio-split>
 
 </audio-series><audio-series>
 <!-- Right channel = M-S
 or 2R = (L+R) - (L-R) = L + R - L +R
 -->
 
-<audio-split><audio-series>
+<audio-split>
 <audio-gain></audio-gain>
-</audio-series><audio-series>
 <audio-gain gain="-1"></audio-gain>
-</audio-series></audio-split>
+</audio-split>
 <audio-merge></audio-merge>
 
-<audio-split swap-outputs><audio-series><audio-gain></audio-gain></audio-series></audio-split>
+<audio-split swap-outputs><audio-gain></audio-gain></audio-split>
 </audio-series></audio-parallel>
 </audio-series>
 

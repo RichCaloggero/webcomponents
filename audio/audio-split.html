@@ -51,11 +51,11 @@ this.whenAllChildrenLoaded (this.connectAll);
 } // connectedCallback
 
 connectAll (nodes) {
-var channel1, channel2, gain;
+var channel1, channel2, gain = audio.createGain();
 
 if (nodes.length === 0) {
-channel1 = gain;
-channel2 = null;
+alert ("split must have 1 or 2 children");
+return;
 } else if (nodes.length === 1) {
 channel1 = this.firstElementChild;
 channel2 = null;

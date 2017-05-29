@@ -74,16 +74,16 @@ return;
 
 //alert (`split: ${this.label} ${this.swapInputs} ${this.swapOutputs}, ${this.swapInputs? 1:0} ${this.swapOutputs? 1:0}`);
 if (channel1) {
-//channel1.channelCount = 1;
-//channel1.channelCountMode = "explicit";
+channel1.channelCount = 1;
+channel1.channelCountMode = "explicit";
 this._in.connect (channel1._in, this.swapInputs? 1 : 0, 0);
 channel1._out.connect (this._out, 0, this.swapOutputs? 1 : 0);
 } // if
 
 if (channel2) {
 //alert ("split: channel2");
-//channel2.channelCount = 1;
-//channel2.channelCountMode = "explicit";
+channel2.channelCount = 1;
+channel2.channelCountMode = "explicit";
 this._in.connect (channel2._in, this.swapInputs? 0 : 1, 0);
 channel2._out.connect (this._out, 0, this.swapOutputs? 0 : 1);
 } // if

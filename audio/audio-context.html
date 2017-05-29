@@ -101,7 +101,7 @@ if (audioNode) {
 this._audioNode = audioNode;
 this._audioIn.connect (this._audioNode).connect (this._audioOut);
 } else {
-this._audioIn.connect (this._audioOut);
+//this._audioIn.connect (this._audioOut);
 } // if
 this._connect ();
 } // _init
@@ -153,7 +153,7 @@ this._audioOut.disconnect ();
 contextCheck (name) {
 var parentName = this.parentNode.localName;
 //alert ("parentName: " + parentName);
-if (parentName !== "audio-series" && parentName !== "audio-parallel") {
+if (parentName !== "audio-series" && parentName !== "audio-parallel" && parentName !== "audio-split") {
 alert (`${name} : element must be child of audio-parallel or audio-series to participate in audio graph`);
 //throw new Error ("audio graph error");
 return false;

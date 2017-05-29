@@ -25,45 +25,80 @@
 <body>
 <h1>audio component demo</h1>
 
-<audio-context><audio-series>
-<audio-player src="music.mp3">
-</audio-player>
+<p>This takes a signal from the specified URL and pipes it through a panner,
+to a network that attempts to do crosstalk cancelation (<a href="https://www.ideals.illinois.edu/bitstream/handle/2142/47443/ECE499-Fa2013-anushiravani.pdf?sequence=2">https://www.ideals.illinois.edu/bitstream/handle/2142/47443/ECE499-Fa2013-anushiravani.pdf?sequence=2</a>),
+to a network that does mid-side processing (<a href="http://www.masteringhouse.com/masteringtips/midside.html">http://www.masteringhouse.com/masteringtips/midside.html</a>),
+and finally to output.
+</p><p>
+The crosstalk cancelation done here is simplistic and doesn't really work well, but useful to demo the webcomponents.
+The mid-side processing network produces a similar result, again useful to demo these components and not much else.
+</p><p>
+All processing is turned off by default, so when first loaded, you should hear the original audio unchanged.
+See comments in the HTML for more...
+</p>
 
-<audio-series label="mono">
+<audio-context><audio-series>
+<!-- music.mp3 is default URL, but you can specify whatever you like via the UI
+Unlike other components, audio-player always produces a UI(no need for label attribute).
+-->
+
+<audio-player src="music.mp3"></audio-player>
+
+<!-- convert to mono before 3D panner.
+Check the bypass in UI to send original stereo signal to panner
+-->
+<audio-series label="mono" bypass>
 <audio-merge></audio-merge>
 </audio-series>
 
-<audio-pan label="3D panner"
- x="3" z="-5"
- max-distance="100" ref-distance="60" 
+<!-- webaudio's 3D panner (works great through headphones, but when heard through loudspeakers, the effect is diminished due to crosstalk.
+These values are random -- just for demonstration...
+-->
+<audio-pan label="3D panner" bypass
+x="3" z="-5"
+max-distance="100" ref-distance="60" 
 rolloff-factor=".0"></audio-pan>
 
-<audio-parallel label="crosstalk cancelation"><audio-series>
+<!-- simple XTC:
+take each channel, invert phase, and feed it with delay to the opposite channel.
+This is mixed with the original input signal.
+The hope is that when heard through speakers, the slightly delayed phase inverted signal from one speaker will cancel sounds from that speaker heard at the opposite ear.
+-->
+<audio-parallel label="crosstalk cancelation" bypass><audio-series>
 
+<!-- this branch passes input to output -->
 <audio-gain></audio-gain>
 
 </audio-series><audio-series>
 
+<!-- this branch does the phase inversion and delay (invert phase done via thd delay component itself, although it could be implemented in HTML instead, but would be much more verbose (need for abstraction) -->
+
 <audio-split swap-outputs><audio-series>
-<audio-delay bypass label="left delay" delay-time=".0005" invert-phase></audio-delay>
+<audio-delay label="left delay" delay-time=".0005" invert-phase></audio-delay>
 </audio-series><audio-series>
-<audio-delay bypass label="right delay" delay-time="0.0005" invert-phase></audio-delay>
+<audio-delay label="right delay" delay-time="0.0005" invert-phase></audio-delay>
 </audio-series></audio-split>
 
 <audio-filter type="highpass" frequency="100.0" q="1.0"></audio-filter>
 <audio-gain label="inverted level" gain="1.3"></audio-gain>
 </audio-series></audio-parallel>
 
-
-<audio-series label="stereo widener">
+<!-- this network allows you to control sum and difference (mid / side) separately -->
+<audio-series label="stereo widener" >
+<!-- left channel will be sum, right channel will be difference
+-->
 <audio-parallel><audio-series>
 
+<!-- sum the two channels -->
 <audio-merge></audio-merge>
+
+<!-- and put on left output with gain adjustment -->
 <audio-split><audio-series>
 <audio-gain  label="center level" gain="1.5"></audio-gain>
 </audio-series></audio-split>
 
 </audio-series><audio-series>
+<!-- this takes difference -->
 
 <audio-split><audio-series>
 <audio-gain></audio-gain>
@@ -71,23 +106,39 @@ rolloff-factor=".0"></audio-pan>
 <audio-gain gain="-1"></audio-gain>
 </audio-series></audio-split>
 
+<!-- merge to one channel -->
 <audio-merge></audio-merge>
 <audio-filter type="highpass" frequency="100.0" q="1.0"></audio-filter>
 <audio-gain label="side level" gain="2.0"></audio-gain>
+
+<!-- and send to right output -->
 <audio-split swap-outputs><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 
 </audio-series></audio-parallel>
 
+<!-- now we have sum on left channel, difference on right channel.
+We next do inverse , creating l+r (normal stereo) from the sum / difference signals.
+Any level adjustments made to sum or difference with thus be reflected in the results of this l+r conversion.
+-->
 
 <audio-parallel><audio-series>
-
+<!-- Left channel = M+S
+or 2L = (L+R) + (L-R) 
+I drop the gain correction factor here...
+-->
+<!-- M+S -->
 <audio-merge></audio-merge>
+
+<!-- send to left channel of final output -->
 <audio-split><audio-series><audio-gain></audio-gain></audio-series></audio-split>
 
 </audio-series><audio-series>
+<!-- Right channel = M-S
+or 2R = (L+R) - (L-R) = L + R - L +R
+-->
 
 <audio-split><audio-series>
-<audio-gain>></audio-gain>
+<audio-gain></audio-gain>
 </audio-series><audio-series>
 <audio-gain gain="-1"></audio-gain>
 </audio-series></audio-split>

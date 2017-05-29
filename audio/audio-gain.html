@@ -52,6 +52,7 @@ this._id = AudioGain.is + instanceCount;
 if (this._debug) this.label = this._id;
 
 this._init (audio.createGain());
+//this._audioNode.channelCountMode = "explicit";
 } // constructor
 
 connectedCallback () {

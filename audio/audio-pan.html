@@ -7,15 +7,22 @@
 :host {
 display: block;
 }
+
+:host .field {
+display: inline;
+}
 </style>
 
 <div class="audio-pan" role="region" aria-label$="{{label}}">
+<div class="row">
 <span class="label">{{label}}</span>
 
 <div class="field" data-name="bypass">
 <label>bypass</label>
 <br><input type="checkbox" checked="{{bypass::change}}">
 </div>
+
+</div><div class="row">
 
 <div class="field" data-name="x">
 <label>x</label>
@@ -31,6 +38,8 @@ display: block;
 <label>z</label>
 <br><input type="number" value="{{z::change}}">
 </div>
+
+</div><div class="row">
 
 <div class="field" data-name="mmaxDistance">
 <label>max distance</label>
@@ -61,6 +70,8 @@ display: block;
 <label>cone outer gain</label>
 <br><input type="number" value="{{coneOuterGain::change}}">
 </div>
+
+</div><!-- .row -->
 
 </div>
 </template>

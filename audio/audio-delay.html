@@ -7,15 +7,22 @@
 :host {
 display: block;
 }
+
+:host .field {
+display: inline;
+}
 </style>
 
 <div class="audio-delay" role="region" aria-label$="{{label}}">
+<div class="row">
 <span class="label">[[label]]</span>
 
 <div class="field" data-name="bypass">
 <label>bypass</label>
 <br><input type="checkbox" checked="{{bypass::change}}" accesskey="x">
 </div>
+
+</div><div class="row">
 
 <div class="field" data-name="delayTime">
 <label>delay time</label>
@@ -26,6 +33,8 @@ display: block;
 <label>invert phase</label>
 <br><input type="checkbox" checked="{{invertPhase::change}}">
 </div>
+
+</div><!-- .row -->
 
 </div>
 

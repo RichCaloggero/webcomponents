@@ -86,7 +86,7 @@ All parameters displayed in the UI can be set in the HTML via attributes.
 ### Style
 
 No attempt has been made to style anything.
-This is left to the hosting document's.
+I tried to break UI up using simple divs.
 
 ### Accessibility
 
